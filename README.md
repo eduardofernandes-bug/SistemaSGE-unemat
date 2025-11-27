@@ -7,7 +7,6 @@
 
 Sistema web moderno e completo para gerenciamento de estágios em instituições de ensino. Desenvolvido com Python/Flask, oferece interface intuitiva para cadastro e acompanhamento de alunos, empresas parceiras e contratos de estágio.
 
-![Dashboard](https://via.placeholder.com/800x400?text=SGE+Dashboard+Preview)
 
 ---
 
@@ -39,7 +38,7 @@ pip
 
 1. **Clone o repositório**
 ```bash
-git clone <url-do-repositorio>
+git clone https://github.com/eduardofernandes-bug/SistemaSGE-unemat
 cd sge
 ```
 
