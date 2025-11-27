@@ -60,7 +60,9 @@ pip install -r requirements.txt
 
 4. **Configure o banco de dados**
 ```
-Execute os scripts que estão na pastas na seguinte ordem: SCRIPT DB, INSERT ESTADOS, INSERT CIDADES e para adicionar dados para visualização no sistema execute o INSERT DADOS. 
+Execute os scripts que estão na pastas na seguinte ordem:
+SCRIPT DB, INSERT ESTADOS, INSERT CIDADES
+E para adicionar dados para visualização no sistema execute o INSERT DADOS. 
 ```
 
 5. **Configure as variáveis de ambiente**
