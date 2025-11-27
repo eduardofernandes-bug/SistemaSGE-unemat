@@ -1,16 +1,10 @@
-# -*- coding: utf-8 -*-
 import mysql.connector
 import os
 from dotenv import load_dotenv
 
-# Carrega as variáveis de ambiente do arquivo .env
 load_dotenv()
 
 def conectar():
-    """
-    Estabelece conexão com o banco de dados MySQL usando credenciais
-    armazenadas em variáveis de ambiente para maior segurança.
-    """
     try:
         connection = mysql.connector.connect(
             host=os.getenv('DB_HOST', 'localhost'),

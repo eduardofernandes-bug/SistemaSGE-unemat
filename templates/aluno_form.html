@@ -3,9 +3,6 @@
 {% block content %}
 
 <style>
-/* ========================================
-   CORREÇÃO UNIVERSAL PARA TEMA ESCURO
-   ======================================== */
 .page-header,
 .hero-section,
 .filter-section,
@@ -181,49 +178,41 @@ body.dark select option {
 
   <form method="post">
     <div class="row g-3">
-      <!-- Nome -->
       <div class="col-md-6">
         <label class="form-label">Nome</label>
         <input class="form-control-simple form-control" name="nome" required value="{{ aluno.nome if aluno else '' }}">
       </div>
 
-      <!-- Matrícula -->
       <div class="col-md-6">
         <label class="form-label">Matrícula</label>
         <input class="form-control-simple form-control" name="matricula" required value="{{ aluno.matricula if aluno else '' }}">
       </div>
 
-      <!-- CPF -->
       <div class="col-md-6">
         <label class="form-label">CPF</label>
         <input class="form-control-simple form-control mask-cpf" name="cpf" required value="{{ aluno.CPF if aluno else '' }}">
       </div>
 
-      <!-- Nome Institucional -->
       <div class="col-md-6">
         <label class="form-label">Nome institucional</label>
         <input class="form-control-simple form-control" name="nome_institucional" value="{{ aluno.nomeInstitucional if aluno else '' }}">
       </div>
 
-      <!-- Telefone -->
       <div class="col-md-6">
         <label class="form-label">Telefone</label>
         <input class="form-control-simple form-control mask-phone" name="telefone" value="{{ aluno.telefone if aluno else '' }}">
       </div>
 
-      <!-- Endereço -->
       <div class="col-md-6">
         <label class="form-label">Endereço</label>
         <input class="form-control-simple form-control" name="endereco" value="{{ aluno.endereco if aluno else '' }}">
       </div>
 
-      <!-- Bairro -->
       <div class="col-md-6">
         <label class="form-label">Bairro</label>
         <input class="form-control-simple form-control" name="bairro" value="{{ aluno.bairro if aluno else '' }}">
       </div>
 
-      <!-- Período -->
       <div class="col-md-6">
         <label class="form-label">Período</label>
         <select class="form-control-simple form-select" name="periodo" required>
@@ -235,7 +224,6 @@ body.dark select option {
         </select>
       </div>
 
-      <!-- Status -->
       <div class="col-md-6">
         <label class="form-label">Status</label>
         <select class="form-control-simple form-select" name="status" required>
@@ -247,7 +235,6 @@ body.dark select option {
         </select>
       </div>
 
-      <!-- Estado -->
       <div class="col-md-6">
         <label class="form-label">Estado</label>
         <select id="estado" name="estado_id" class="form-control-simple form-select">
@@ -258,7 +245,6 @@ body.dark select option {
         </select>
       </div>
 
-      <!-- Cidade -->
       <div class="col-md-6">
         <label class="form-label">Cidade</label>
         <select id="cidade" name="cidade_id" class="form-control-simple form-select">

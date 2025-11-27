@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Módulo para cálculo de estatísticas do sistema SGE
-"""
 from db import conectar
 from datetime import datetime, timedelta
 import logging
@@ -124,7 +120,6 @@ class Estatisticas:
             
             data_limite = datetime.now() - timedelta(days=dias)
             
-            # Estágios iniciados no período
             cursor.execute("""
                 SELECT COUNT(*) as total
                 FROM estagio 
@@ -133,7 +128,6 @@ class Estatisticas:
             """, (data_limite.date(),))
             estagios_iniciados = cursor.fetchone()['total']
             
-            # Alunos por situação
             cursor.execute("""
                 SELECT statusAluno, COUNT(*) as total
                 FROM aluno 
@@ -142,7 +136,6 @@ class Estatisticas:
             """)
             alunos_por_status = cursor.fetchall()
             
-            # Estágios por situação
             cursor.execute("""
                 SELECT situacao, COUNT(*) as total
                 FROM estagio 

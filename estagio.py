@@ -171,9 +171,6 @@ class Estagio:
         con.close()
         return rows
 
-    
-    # Substitua o método buscar_por_id na classe Estagio (estagio.py)
-
     @staticmethod
     def buscar_por_id(idEstagio):
         con = conectar()

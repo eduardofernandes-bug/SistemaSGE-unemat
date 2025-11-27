@@ -3,9 +3,6 @@
 {% block content %}
 
 <style>
-/* ========================================
-   CORREÇÃO UNIVERSAL PARA TEMA ESCURO
-   ======================================== */
 .page-header,
 .hero-section,
 .filter-section,
@@ -181,43 +178,36 @@ body.dark select option {
 
   <form method="post">
     <div class="row g-3">
-      <!-- Razão Social -->
       <div class="col-md-6">
         <label class="form-label">Razão Social</label>
         <input class="form-control-simple form-control" name="razao_social" required value="{{ empresa.razaoSocial if empresa else '' }}">
       </div>
 
-      <!-- Nome Fantasia -->
       <div class="col-md-6">
         <label class="form-label">Nome Fantasia</label>
         <input class="form-control-simple form-control" name="nome_fantasia" value="{{ empresa.nomeFantasia if empresa else '' }}">
       </div>
 
-      <!-- CNPJ -->
       <div class="col-md-6">
         <label class="form-label">CNPJ</label>
         <input class="form-control-simple form-control mask-cnpj" name="cnpj" value="{{ empresa.cnpj if empresa else '' }}">
       </div>
 
-      <!-- CEP -->
       <div class="col-md-6">
         <label class="form-label">CEP</label>
         <input class="form-control-simple form-control" name="cep" value="{{ empresa.cep if empresa else '' }}" maxlength="9">
       </div>
 
-      <!-- Endereço -->
       <div class="col-md-6">
         <label class="form-label">Endereço</label>
         <input class="form-control-simple form-control" name="endereco" value="{{ empresa.endereco if empresa else '' }}">
       </div>
 
-      <!-- Bairro -->
       <div class="col-md-6">
         <label class="form-label">Bairro</label>
         <input class="form-control-simple form-control" name="bairro" value="{{ empresa.bairro if empresa else '' }}">
       </div>
 
-      <!-- Estado -->
       <div class="col-md-6">
         <label class="form-label">Estado</label>
         <select id="estado" name="estado_id" class="form-control-simple form-select">
@@ -228,7 +218,6 @@ body.dark select option {
         </select>
       </div>
 
-      <!-- Cidade -->
       <div class="col-md-6">
         <label class="form-label">Cidade</label>
         <select id="cidade" name="cidade_id" class="form-control-simple form-select">
