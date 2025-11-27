@@ -59,8 +59,8 @@ pip install -r requirements.txt
 ```
 
 4. **Configure o banco de dados**
-```sql
-CREATE DATABASE sge CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+Execute os scripts que estão na pastas na seguinte ordem: SCRIPT DB, INSERT ESTADOS, INSERT CIDADES e para adicionar dados para visualização no sistema execute o INSERT DADOS. 
 ```
 
 5. **Configure as variáveis de ambiente**
