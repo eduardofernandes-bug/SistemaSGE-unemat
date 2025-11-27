@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}SGE - Sistema de Estágios{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+  <style>
+    /* -------------------------
+       VARIÁVEIS GLOBAIS (LIGHT / DARK)
+       ------------------------- */
+    :root {
+      /* base colors */
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary: #8b5cf6;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --info: #3b82f6;
+      --dark: #1e293b;
+      --light: #f8fafc;
+
+      /* gradients & shadows */
+      --gradient-1: linear-gradient(135deg, #0d6efd 0%, #6c757d 100%);
+      --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      --shadow-sm: 0 2px 4px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.08);
+      --shadow-lg: 0 10px 15px rgba(0,0,0,0.12);
+      --shadow-xl: 0 20px 25px rgba(0,0,0,0.15);
+
+      /* theme (light default) */
+      --bg: #f5f6fa;
+      --bg-card: #ffffff;
+      --text: #1f2937;
+      --text-light: #4b5563;
+      --border: #e5e7eb;
+
+      --transition-fast: 0.18s ease;
+      --card-radius: 12px;
+    }
+
+    /* dark theme variables */
+    body.dark {
+      --bg: #0b1220;
+      --bg-card: #0f1724;
+      --text: #e6eef8;
+      --text-light: #94a3b8;
+      --border: #1f2a3a;
+      --primary: #8b93ff;
+      --shadow-sm: none;
+      --shadow-md: none;
+      --shadow-lg: none;
+    }
+
+    /* -------------------------
+       RESET / GLOBAL
+       ------------------------- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      transition: background var(--transition-fast), color var(--transition-fast);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* -------------------------
+       NAVBAR
+       ------------------------- */
+    .navbar-custom {
+      background: var(--bg-card);
+      box-shadow: var(--shadow-md);
+      padding: 1rem 0;
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .navbar-brand {
+      font-size: 1.75rem;
+      font-weight: 800;
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-link {
+      color: var(--text-light) !important;
+      font-weight: 600;
+      padding: 0.5rem 1.25rem !important;
+      margin: 0 0.25rem;
+      border-radius: 8px;
+      transition: all 0.22s ease;
+    }
+    .nav-link:hover { background: rgba(99,102,241,0.06); transform: translateY(-2px); }
+    .nav-link.active { background: var(--gradient-1); color: white !important; }
+
+    /* theme toggle button */
+    #themeToggle { border-radius: 8px; padding: 0.45rem 0.6rem; }
+
+    /* -------------------------
+       LAYOUT / CARDS / TABLES
+       ------------------------- */
+    .main-container { max-width: 1400px; margin: 2rem auto; padding: 0 1.5rem; }
+
+    .table-card, .filter-box, .content-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-lg);
+      border-radius: var(--card-radius);
+      padding: 1.25rem;
+      transition: background var(--transition-fast), border-color var(--transition-fast);
+    }
+
+    .table-modern {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .table-modern th, .table-modern td {
+      padding: 1rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: middle;
+    }
+    .table-modern tbody tr:hover { background: rgba(99,102,241,0.03); }
+
+    /* PAGE TITLE ICON GRADIENT (global) */
+    .page-title i {
+      font-size: 2.25rem;
+      background: var(--gradient-2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display:inline-block;
+      vertical-align: middle;
+      margin-right: 0.6rem;
+    }
+
+    /* -------------------------
+       BADGES / BUTTONS / AVATAR
+       ------------------------- */
+    .badge-status {
+      padding: 0.35rem 0.9rem;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      display: inline-block;
+    }
+    .badge-ativo    { background: rgba(16,185,129,0.12); color: var(--success); }
+    .badge-inativo  { background: rgba(239,68,68,0.10); color: var(--danger); }
+    .badge-trancado { background: rgba(245,158,11,0.10); color: var(--warning); }
+    .badge-concluido{ background: rgba(59,130,246,0.12); color: #2563eb; }
+    .badge-cancelado{ background: rgba(246, 78, 59, 0.12); color: #eb2525; }
+    .badge-pendente { background: rgba(234,179,8,0.06); color: #b45309; }
+    .badge-aguardando { background: rgba(234,179,8,0.06); color: #d1be16; }
+    .badge-em-analise{ background: rgba(249,115,22,0.06); color: #f97316; }
+
+    .btn-action { border-radius: 8px; padding: 0.52rem 0.75rem; font-weight:600; }
+    .btn-edit { background: #3f4b5b; color: #fff; border:none; }
+    .btn-delete { background: var(--danger); color: #fff; border:none; }
+
+    .avatar-gradient-1 { background: linear-gradient(135deg,#7c3aed,#06b6d4); color: #fff; }
+    .avatar-gradient-2 { background: linear-gradient(135deg,#fb7185,#f97316); color: #fff; }
+    .avatar-gradient-3 { background: linear-gradient(135deg,#60a5fa,#8b5cf6); color: #fff; }
+    .avatar-gradient-4 { background: linear-gradient(135deg,#34d399,#06b6d4); color: #fff; }
+    .avatar-gradient-5 { background: linear-gradient(135deg,#f472b6,#f59e0b); color: #fff; }
+
+    /* small layout / misc */
+    .student-avatar { width:48px; height:48px; border-radius: 10px; display:flex; align-items:center; justify-content:center; font-weight:700; }
+    .student-info .student-name { font-weight:700; }
+    .student-id { color: var(--text-light); font-size: 0.9rem; }
+
+    .fade-in-up { animation: fadeInUp 0.6s ease; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px);} to { opacity: 1; transform: translateY(0);} }
+
+    /* responsive */
+    @media (max-width: 768px) {
+      .navbar-brand { font-size: 1.5rem; }
+      .main-container { padding: 0 1rem; }
+    }
+
+    /* máscaras (visual) */
+    input.mask-cpf, input.mask-cnpj, input.mask-phone { font-family: monospace; }
+
+    /* modal custom */
+    .modal-overlay { position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.6); z-index:9999; display:flex; align-items:center; justify-content:center; backdrop-filter: blur(4px); animation: fadeIn 0.2s ease; }
+    .modal-content-custom { background: var(--bg-card); border-radius: 16px; max-width: 500px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.12); animation: slideUp 0.3s ease; }
+    .modal-header-custom { padding: 1.5rem; border-bottom: 2px solid var(--border); display:flex; align-items:center; gap:1rem; }
+    .modal-header-custom i { font-size:2rem; color: var(--warning); }
+    .modal-header-custom h3 { margin:0; font-size:1.25rem; font-weight:700; color: var(--text); }
+    .modal-body-custom { padding:1.5rem; color: var(--text-light); font-size:1rem; }
+    .modal-footer-custom { padding:1.5rem; border-top:2px solid var(--border); display:flex; gap:1rem; justify-content:flex-end; }
+    .btn-modal { padding:0.65rem 1.5rem; border-radius:8px; font-weight:600; border:none; cursor:pointer; }
+    .btn-cancel-modal { background: #e2e8f0; color: #475569; }
+    .btn-confirm-modal { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; }
+
+    @keyframes fadeIn { from{ opacity:0;} to{ opacity:1; } }
+    @keyframes slideUp { from{ transform: translateY(20px); opacity:0; } to{ transform: translateY(0); opacity:1; } }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{{ url_for('index') }}">
+        <i class="bi bi-briefcase-fill"></i> SGE
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto align-items-center">
+          <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('index') }}">
+              <i class="bi bi-house-door-fill"></i> Início
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if 'aluno' in request.endpoint %}active{% endif %}" href="{{ url_for('alunos') }}">
+              <i class="bi bi-people-fill"></i> Alunos
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if 'empresa' in request.endpoint %}active{% endif %}" href="{{ url_for('empresas') }}">
+              <i class="bi bi-building"></i> Empresas
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if 'estagio' in request.endpoint %}active{% endif %}" href="{{ url_for('estagios') }}">
+              <i class="bi bi-clipboard-check"></i> Estágios
+            </a>
+          </li>
+        </ul>
+
+        <!-- Theme toggle (mostra ícone correto via JS) -->
+        <div class="d-flex align-items-center ms-3">
+          <button id="themeToggle" class="btn btn-light" title="Alternar tema">
+            <i id="themeIcon" class="bi bi-moon-fill"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="main-container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="fade-in-up mb-4">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-custom alert-dismissible fade show" role="alert">
+              <i class="bi bi-{% if category == 'success' %}check-circle-fill{% elif category == 'danger' %}x-circle-fill{% elif category == 'warning' %}exclamation-triangle-fill{% else %}info-circle-fill{% endif %}"></i>
+              <span>{{ message }}</span>
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}
+<!-- DARK-THEME-OVERRIDES -->
+
+<style>
+/* Dark-mode-friendly overrides — uses CSS variables defined in base.html */
+.page-header, .page-title-box, .card-header, .hero-card, .table-card, .filter-box, .form-container {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+/* Table cells and headers */
+.table-modern th, .table-modern td {
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+/* Buttons: ensure primary actions remain visible in dark theme */
+.btn-primary, .btn-primary-custom, .btn-primary-main {
+  background: var(--gradient-1) !important;
+  color: var(--primary-contrast) !important;
+  border: none !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+/* Small fixes for inputs and selects */
+input.form-control, textarea.form-control, select.form-select {
+  background: transparent !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+}
+/* Ensure icons with gradient keep contrast */
+.page-title i, .icon-gradient {
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+/* "Novo" action links/buttons common pattern */
+a.btn-new, .btn-new {
+  display: inline-flex;
+  gap: .5rem;
+  align-items: center;
+  padding: .55rem .85rem;
+  border-radius: 10px;
+  background: var(--gradient-1);
+  color: white;
+  text-decoration: none;
+}
+/* Make badges readable */
+.badge-status { color: inherit !important; }
+</style>
+{% endblock %}
+  </div>
+
+  <!-- Confirm Modal -->
+  <div id="confirmModal" class="modal-overlay" style="display:none;">
+    <div class="modal-content-custom">
+      <div class="modal-header-custom">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <h3 id="modalTitle">Confirmar Ação</h3>
+      </div>
+      <div class="modal-body-custom">
+        <p id="modalMessage">Tem certeza que deseja realizar esta ação?</p>
+      </div>
+      <div class="modal-footer-custom">
+        <button type="button" class="btn-modal btn-cancel-modal" onclick="closeModal()">Cancelar</button>
+        <button type="button" class="btn-modal btn-confirm-modal" id="confirmButton">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- -------------------------
+       SCRIPTS: MÁSCARAS / MODAL / THEME TOGGLE
+       ------------------------- -->
+  <script>
+    /* ---------- MÁSCARAS ---------- */
+    function onlyDigits(str){ return (str || '').replace(/\D/g,''); }
+
+    function maskCPF(v){
+      v = onlyDigits(v).slice(0,11);
+      if (v.length <= 3) return v;
+      if (v.length <= 6) return v.slice(0,3)+'.'+v.slice(3);
+      if (v.length <= 9) return v.slice(0,3)+'.'+v.slice(3,6)+'.'+v.slice(6);
+      return v.slice(0,3)+'.'+v.slice(3,6)+'.'+v.slice(6,9)+'-'+v.slice(9);
+    }
+
+    function maskCNPJ(v){
+      v = onlyDigits(v).slice(0,14);
+      if (v.length <= 2) return v;
+      if (v.length <= 5) return v.slice(0,2)+'.'+v.slice(2);
+      if (v.length <= 8) return v.slice(0,2)+'.'+v.slice(2,5)+'.'+v.slice(5);
+      if (v.length <= 12) return v.slice(0,2)+'.'+v.slice(2,5)+'.'+v.slice(5,8)+'/'+v.slice(8);
+      return v.slice(0,2)+'.'+v.slice(2,5)+'.'+v.slice(5,8)+'/'+v.slice(8,12)+'-'+v.slice(12);
+    }
+
+    function maskPhone(v){
+      v = onlyDigits(v).slice(0,11);
+      if (v.length <= 2) return '('+v;
+      if (v.length <= 6) return '('+v.slice(0,2)+') '+v.slice(2);
+      if (v.length <= 10) return '('+v.slice(0,2)+') '+v.slice(2,6)+'-'+v.slice(6);
+      return '('+v.slice(0,2)+') '+v.slice(2,7)+'-'+v.slice(7);
+    }
+
+    function bindMasks(){
+      document.querySelectorAll('input.mask-cpf').forEach(function(inp){
+        inp.addEventListener('input', function(){ this.value = maskCPF(this.value); });
+      });
+      document.querySelectorAll('input.mask-cnpj').forEach(function(inp){
+        inp.addEventListener('input', function(){ this.value = maskCNPJ(this.value); });
+      });
+      document.querySelectorAll('input.mask-phone').forEach(function(inp){
+        inp.addEventListener('input', function(){ this.value = maskPhone(this.value); });
+      });
+    }
+
+    function validateFormMasks(form){
+      const cpfEl = form.querySelector('input[name="cpf"]');
+      if (cpfEl){
+        const digits = onlyDigits(cpfEl.value);
+        if (digits.length !== 11) return 'CPF inválido: deve conter 11 dígitos.';
+      }
+      const cnpjEl = form.querySelector('input[name="cnpj"]');
+      if (cnpjEl && cnpjEl.value.trim() !== ''){
+        const digits = onlyDigits(cnpjEl.value);
+        if (digits.length !== 14) return 'CNPJ inválido: deve conter 14 dígitos.';
+      }
+      const phoneEl = form.querySelector('input[name="telefone"], input[name="telefone_principal"]');
+      if (phoneEl && phoneEl.value.trim() !== ''){
+        const digits = onlyDigits(phoneEl.value);
+        if (!(digits.length === 10 || digits.length === 11)) return 'Telefone inválido: 10 ou 11 dígitos esperados.';
+      }
+      return null;
+    }
+
+    document.addEventListener('DOMContentLoaded', function(){
+      bindMasks();
+      document.querySelectorAll('form').forEach(function(f){
+        f.addEventListener('submit', function(e){
+          const err = validateFormMasks(f);
+          if (err){
+            e.preventDefault();
+            alert(err);
+          }
+        });
+      });
+    });
+
+    /* ---------- MODAL DE CONFIRMAÇÃO ---------- */
+    let formToSubmit = null;
+    function showConfirmModal(title, message, form) {
+      const m = document.getElementById('confirmModal');
+      if (!m) return;
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalMessage').textContent = message;
+      m.style.display = 'flex';
+      formToSubmit = form;
+    }
+    function closeModal() {
+      const m = document.getElementById('confirmModal');
+      if (!m) return;
+      m.style.display = 'none';
+      formToSubmit = null;
+    }
+    document.getElementById('confirmButton')?.addEventListener('click', function() {
+      if (formToSubmit) formToSubmit.submit();
+      closeModal();
+    });
+    document.getElementById('confirmModal')?.addEventListener('click', function(e){
+      if (e.target === this) closeModal();
+    });
+
+    /* ---------- THEME TOGGLE (persistência localStorage) ---------- */
+    (function(){
+      const toggle = document.getElementById('themeToggle');
+      const icon = document.getElementById('themeIcon');
+      const bodyEl = document.body;
+
+      if (!toggle || !icon) return;
+
+      // Aplica preferência salva
+      const saved = localStorage.getItem('theme');
+      if (saved === 'dark') {
+        bodyEl.classList.add('dark');
+        icon.className = 'bi bi-sun-fill';
+      } else {
+        bodyEl.classList.remove('dark');
+        icon.className = 'bi bi-moon-fill';
+      }
+
+      toggle.addEventListener('click', function(){
+        bodyEl.classList.toggle('dark');
+        const isDark = bodyEl.classList.contains('dark');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        icon.className = isDark ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,327 @@
+{% extends 'base.html' %}
+{% block title %}SGE - {{ 'Editar' if aluno else 'Novo' }} Aluno{% endblock %}
+{% block content %}
+
+<style>
+/* ========================================
+   CORREÇÃO UNIVERSAL PARA TEMA ESCURO
+   ======================================== */
+.page-header,
+.hero-section,
+.filter-section,
+.table-card,
+.form-container,
+.stat-card,
+.feature-card,
+.content-box {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+
+.page-title,
+.hero-title,
+.form-title,
+.feature-title,
+.filter-label,
+.form-label,
+.form-label-custom {
+  color: var(--text) !important;
+}
+
+.hero-subtitle,
+.feature-description,
+.stat-label,
+.student-id,
+.company-fantasy {
+  color: var(--text-light) !important;
+}
+
+.table-modern th,
+.table-modern td {
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+
+.table-modern tbody tr:hover {
+  background: rgba(99, 102, 241, 0.05) !important;
+}
+
+input.form-control,
+input.form-control-simple,
+input.form-control-custom,
+textarea.form-control,
+select.form-select,
+select.form-control-custom,
+select.form-control-simple {
+  background: var(--bg-card) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  background: var(--bg-card) !important;
+  border-color: var(--primary) !important;
+  color: var(--text) !important;
+}
+
+body.dark .badge-ativo { background: rgba(16, 185, 129, 0.2) !important; color: #34d399 !important; }
+body.dark .badge-inativo { background: rgba(239, 68, 68, 0.2) !important; color: #f87171 !important; }
+body.dark .badge-trancado { background: rgba(245, 158, 11, 0.2) !important; color: #fbbf24 !important; }
+body.dark .badge-concluido { background: rgba(59, 130, 246, 0.2) !important; color: #60a5fa !important; }
+body.dark .badge-cancelado { background: rgba(239, 68, 68, 0.2) !important; color: #f87171 !important; }
+
+.empty-state { color: var(--text-light) !important; }
+.empty-state h4 { color: var(--text) !important; }
+
+body.dark input::placeholder,
+body.dark select::placeholder {
+  color: var(--text-light) !important;
+  opacity: 0.6;
+}
+
+body.dark select option {
+  background: var(--bg-card);
+  color: var(--text);
+}
+
+.student-name,
+.company-name {
+  color: var(--text) !important;
+}
+</style>
+
+<style>
+  .form-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    border-radius: 16px;
+    padding: 2.5rem;
+  }
+
+  .form-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .form-label {
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    font-size: 0.85rem;
+  }
+
+  .form-control-simple {
+    border-radius: 6px;
+    padding: 0.6rem 0.8rem;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+  }
+
+  .form-control-simple:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    outline: none;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid var(--border);
+  }
+
+  .btn-simple {
+    padding: 0.65rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-save {
+    background: #3b82f6;
+    color: white;
+  }
+
+  .btn-save:hover {
+    background: #2563eb;
+  }
+
+  .btn-cancel {
+    background: #64748b;
+    color: white;
+  }
+
+  .btn-cancel:hover {
+    background: #475569;
+  }
+
+  @media (max-width: 768px) {
+    .form-container {
+      padding: 1.5rem;
+    }
+
+    .form-actions {
+      flex-direction: column;
+    }
+  }
+</style>
+
+<div class="form-container fade-in-up">
+  <h2 class="form-title">{{ 'Editar Aluno' if aluno else 'Cadastrar Novo Aluno' }}</h2>
+
+  <form method="post">
+    <div class="row g-3">
+      <!-- Nome -->
+      <div class="col-md-6">
+        <label class="form-label">Nome</label>
+        <input class="form-control-simple form-control" name="nome" required value="{{ aluno.nome if aluno else '' }}">
+      </div>
+
+      <!-- Matrícula -->
+      <div class="col-md-6">
+        <label class="form-label">Matrícula</label>
+        <input class="form-control-simple form-control" name="matricula" required value="{{ aluno.matricula if aluno else '' }}">
+      </div>
+
+      <!-- CPF -->
+      <div class="col-md-6">
+        <label class="form-label">CPF</label>
+        <input class="form-control-simple form-control mask-cpf" name="cpf" required value="{{ aluno.CPF if aluno else '' }}">
+      </div>
+
+      <!-- Nome Institucional -->
+      <div class="col-md-6">
+        <label class="form-label">Nome institucional</label>
+        <input class="form-control-simple form-control" name="nome_institucional" value="{{ aluno.nomeInstitucional if aluno else '' }}">
+      </div>
+
+      <!-- Telefone -->
+      <div class="col-md-6">
+        <label class="form-label">Telefone</label>
+        <input class="form-control-simple form-control mask-phone" name="telefone" value="{{ aluno.telefone if aluno else '' }}">
+      </div>
+
+      <!-- Endereço -->
+      <div class="col-md-6">
+        <label class="form-label">Endereço</label>
+        <input class="form-control-simple form-control" name="endereco" value="{{ aluno.endereco if aluno else '' }}">
+      </div>
+
+      <!-- Bairro -->
+      <div class="col-md-6">
+        <label class="form-label">Bairro</label>
+        <input class="form-control-simple form-control" name="bairro" value="{{ aluno.bairro if aluno else '' }}">
+      </div>
+
+      <!-- Período -->
+      <div class="col-md-6">
+        <label class="form-label">Período</label>
+        <select class="form-control-simple form-select" name="periodo" required>
+          <option value="">Selecione</option>
+          <option value="Matutino" {% if aluno and aluno.periodo == 'Matutino' %}selected{% endif %}>Matutino</option>
+          <option value="Vespertino" {% if aluno and aluno.periodo == 'Vespertino' %}selected{% endif %}>Vespertino</option>
+          <option value="Noturno" {% if aluno and aluno.periodo == 'Noturno' %}selected{% endif %}>Noturno</option>
+          <option value="Integral" {% if aluno and aluno.periodo == 'Integral' %}selected{% endif %}>Integral</option>
+        </select>
+      </div>
+
+      <!-- Status -->
+      <div class="col-md-6">
+        <label class="form-label">Status</label>
+        <select class="form-control-simple form-select" name="status" required>
+          <option value="">Selecione</option>
+          <option value="Ativo" {% if aluno and aluno.statusAluno == 'Ativo' %}selected{% endif %}>Ativo</option>
+          <option value="Inativo" {% if aluno and aluno.statusAluno == 'Inativo' %}selected{% endif %}>Inativo</option>
+          <option value="Trancado" {% if aluno and aluno.statusAluno == 'Trancado' %}selected{% endif %}>Trancado</option>
+          <option value="Concluído" {% if aluno and aluno.statusAluno == 'Concluído' %}selected{% endif %}>Concluído</option>
+        </select>
+      </div>
+
+      <!-- Estado -->
+      <div class="col-md-6">
+        <label class="form-label">Estado</label>
+        <select id="estado" name="estado_id" class="form-control-simple form-select">
+          <option value="">Selecione</option>
+          {% for est in estados %}
+            <option value="{{ est.idEstado }}" {% if aluno and aluno.idEstadoE_Cidades == est.idEstado %}selected{% endif %}>{{ est.nome }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Cidade -->
+      <div class="col-md-6">
+        <label class="form-label">Cidade</label>
+        <select id="cidade" name="cidade_id" class="form-control-simple form-select">
+          <option value="">Selecione</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-outline-success">
+        Salvar
+      </button>
+      <a href="{{ url_for('alunos') }}" class="btn btn-outline-danger">
+        Cancelar
+      </a>
+    </div>
+  </form>
+</div>
+
+{% if aluno %}
+<script>
+window.__EDIT__ = {
+  estadoId: "{{ aluno.idEstadoE_Cidades if aluno.idEstadoE_Cidades is defined else '' }}",
+  cidadeId: "{{ aluno.idCidade_Cidades if aluno.idCidade_Cidades is defined else '' }}"
+};
+</script>
+{% endif %}
+
+<script>
+(function(){
+  const estadoSelect = document.getElementById('estado');
+  const cidadeSelect = document.getElementById('cidade');
+  if (!estadoSelect || !cidadeSelect) return;
+
+  function preencherCidades(estadoId, selectedCidadeId){
+    cidadeSelect.innerHTML = '<option value="">Carregando...</option>';
+    if (!estadoId) {
+      cidadeSelect.innerHTML = '<option value="">Selecione</option>';
+      return;
+    }
+    fetch('/api/cidades?estado=' + encodeURIComponent(estadoId))
+      .then(r => r.json())
+      .then(data => {
+        cidadeSelect.innerHTML = '<option value="">Selecione</option>';
+        data.forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c.idCidade;
+          opt.text = (c.cidade || c.nome || '');
+          if (String(c.idCidade) === String(selectedCidadeId)) opt.selected = true;
+          cidadeSelect.appendChild(opt);
+        });
+      })
+      .catch(err => {
+        console.error('Erro ao buscar cidades:', err);
+        cidadeSelect.innerHTML = '<option value="">Erro ao carregar</option>';
+      });
+  }
+
+  estadoSelect.addEventListener('change', function(){ preencherCidades(this.value, null); });
+
+  if (window.__EDIT__ && window.__EDIT__.estadoId) {
+    preencherCidades(window.__EDIT__.estadoId, window.__EDIT__.cidadeId);
+  }
+})();
+</script>
+{% endblock %}

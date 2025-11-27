@@ -1,0 +1,285 @@
+{% extends 'base.html' %}
+{% block title %}SGE - {{ 'Editar' if estagio else 'Novo' }} Estágio{% endblock %}
+{% block content %}
+
+<style>
+/* ========================================
+   CORREÇÃO UNIVERSAL PARA TEMA ESCURO (replicada de empresa_form)
+   ======================================== */
+.page-header,
+.hero-section,
+.filter-section,
+.table-card,
+.form-container,
+.stat-card,
+.feature-card,
+.content-box {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+
+.page-title,
+.hero-title,
+.form-title,
+.feature-title,
+.filter-label,
+.form-label,
+.form-label-custom {
+  color: var(--text) !important;
+}
+
+.hero-subtitle,
+.feature-description,
+.stat-label,
+.student-id,
+.company-fantasy {
+  color: var(--text-light) !important;
+}
+
+input.form-control,
+input.form-control-simple,
+textarea.form-control,
+select.form-select {
+  background: var(--bg-card) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+}
+
+.form-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  border-radius: 16px;
+  padding: 2.5rem;
+}
+
+.form-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--border);
+}
+
+.form-label {
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--text-light);
+}
+
+.form-control-simple {
+  border-radius: 6px;
+  padding: 0.6rem 0.8rem;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.form-control-simple:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08);
+  outline: none;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid var(--border);
+}
+
+.btn-simple {
+  padding: 0.65rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-save {
+  background: var(--gradient-1);
+  color: white;
+}
+
+.btn-save:hover {
+  filter: brightness(0.95);
+}
+
+.btn-cancel {
+  background: #64748b;
+  color: white;
+}
+
+.btn-cancel:hover {
+  background: #475569;
+}
+
+@media (max-width: 768px) {
+  .form-container {
+    padding: 1.5rem;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+}
+</style>
+
+<div class="form-container fade-in-up">
+  <h2 class="form-title">{{ 'Editar Estágio' if estagio else 'Cadastrar Novo Estágio' }}</h2>
+
+  <form method="post">
+    <div class="row g-3">
+      <!-- Aluno -->
+      <div class="col-md-6">
+        <label class="form-label">Aluno</label>
+        <select class="form-control-simple form-select" name="aluno_id" required>
+          <option value="">Selecione</option>
+          {% for a in alunos %}
+            <option value="{{ a.idAluno }}" {% if estagio and estagio.idAlunoA == a.idAluno %}selected{% endif %}>
+              {{ a.nome }} - {{ a.cidade or 'Sem cidade' }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Empresa -->
+      <div class="col-md-6">
+        <label class="form-label">Empresa</label>
+        <select class="form-control-simple form-select" name="empresa_id" required>
+          <option value="">Selecione</option>
+          {% for emp in empresas %}
+            <option value="{{ emp.idEmpresa }}" {% if estagio and estagio.idEmpresaE == emp.idEmpresa %}selected{% endif %}>
+              {{ emp.nomeFantasia or emp.razaoSocial }} - {{ emp.cidade or 'Sem cidade' }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Data Início -->
+      <div class="col-md-4">
+        <label class="form-label">Data Início</label>
+        <input class="form-control-simple form-control" type="date" name="data_inicio" value="{% if estagio and estagio.dataInicio %}{{ estagio.dataInicio }}{% endif %}">
+      </div>
+
+      <!-- Data Fim -->
+      <div class="col-md-4">
+        <label class="form-label">Data Fim</label>
+        <input class="form-control-simple form-control" type="date" name="data_fim" value="{% if estagio and estagio.dataFim %}{{ estagio.dataFim }}{% endif %}">
+      </div>
+
+      <!-- Carga Horária -->
+      <div class="col-md-4">
+        <label class="form-label">Carga Horária Semanal</label>
+        <input class="form-control-simple form-control" type="number" name="carga_horaria" min="1" max="40" value="{% if estagio and estagio.cargaHorariaSemanal %}{{ estagio.cargaHorariaSemanal }}{% endif %}">
+      </div>
+
+      <!-- Situação -->
+      <div class="col-md-6">
+        <label class="form-label">Situação</label>
+        <select class="form-control-simple form-select" name="situacao">
+          <option value="">Selecione</option>
+          <option value="Aguardando" {% if estagio and estagio.situacao == 'Aguardando' %}selected{% endif %}>Aguardando</option>
+          <option value="Ativo" {% if estagio and estagio.situacao == 'Ativo' %}selected{% endif %}>Ativo</option>
+          <option value="Trancado" {% if estagio and estagio.situacao == 'Trancado' %}selected{% endif %}>Trancado</option>
+          <option value="Concluido" {% if estagio and estagio.situacao == 'Concluido' %}selected{% endif %}>Concluído</option>
+          <option value="Cancelado" {% if estagio and estagio.situacao == 'Cancelado' %}selected{% endif %}>Cancelado</option>
+        </select>
+      </div>
+
+      <!-- Status -->
+      <div class="col-md-6">
+        <label class="form-label">Status</label>
+        <select class="form-control-simple form-select" name="status">
+          <option value="">Selecione</option>
+          <option value="Pendente" {% if estagio and estagio.statusEstagio == 'Pendente' %}selected{% endif %}>Pendente</option>
+          <option value="EmAnalise" {% if estagio and estagio.statusEstagio == 'EmAnalise' %}selected{% endif %}>Em Análise</option>
+          <option value="Aprovado" {% if estagio and estagio.statusEstagio == 'Aprovado' %}selected{% endif %}>Aprovado</option>
+          <option value="Reprovado" {% if estagio and estagio.statusEstagio == 'Reprovado' %}selected{% endif %}>Reprovado</option>
+        </select>
+      </div>
+
+      <!-- Supervisor -->
+      <div class="col-md-6">
+        <label class="form-label">Supervisor</label>
+        <input class="form-control-simple form-control" name="supervisor" value="{% if estagio and estagio.supervisor %}{{ estagio.supervisor }}{% endif %}">
+      </div>
+
+      <!-- Orientador Acadêmico -->
+      <div class="col-md-6">
+        <label class="form-label">Orientador Acadêmico</label>
+        <input class="form-control-simple form-control" name="orientador" value="{% if estagio and estagio.orientadorAcademico %}{{ estagio.orientadorAcademico }}{% endif %}">
+      </div>
+
+      <!-- Setor -->
+      <div class="col-md-6">
+        <label class="form-label">Setor</label>
+        <input class="form-control-simple form-control" name="setor" value="{% if estagio and estagio.setor %}{{ estagio.setor }}{% endif %}">
+      </div>
+
+      <!-- Documentação -->
+      <div class="col-md-6">
+        <label class="form-label">Documentação</label>
+        <input class="form-control-simple form-control" name="documentacao" value="{% if estagio and estagio.documentacao %}{{ estagio.documentacao }}{% endif %}">
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-outline-success">Salvar</button>
+      <a href="{{ url_for('estagios') }}" class="btn btn-outline-danger">Cancelar</a>
+    </div>
+  </form>
+</div>
+
+{% if estagio %}
+<script>
+window.__EDIT__ = {
+  alunoId: "{{ estagio.idAlunoA if estagio.idAlunoA is defined else '' }}",
+  empresaId: "{{ estagio.idEmpresaE if estagio.idEmpresaE is defined else '' }}"
+};
+</script>
+{% endif %}
+
+<script>
+(function(){
+  const estadoSelect = document.getElementById('estado');
+  const cidadeSelect = document.getElementById('cidade');
+  if (!estadoSelect || !cidadeSelect) return;
+
+  function preencherCidades(estadoId, selectedCidadeId){
+    cidadeSelect.innerHTML = '<option value="">Carregando...</option>';
+    if (!estadoId) {
+      cidadeSelect.innerHTML = '<option value="">Selecione</option>';
+      return;
+    }
+    fetch('/api/cidades?estado=' + encodeURIComponent(estadoId))
+      .then(r => r.json())
+      .then(data => {
+        cidadeSelect.innerHTML = '<option value="">Selecione</option>';
+        data.forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c.idCidade;
+          opt.text = (c.cidade || c.nome || '');
+          if (String(c.idCidade) === String(selectedCidadeId)) opt.selected = true;
+          cidadeSelect.appendChild(opt);
+        });
+      })
+      .catch(err => {
+        console.error('Erro ao buscar cidades:', err);
+        cidadeSelect.innerHTML = '<option value="">Erro ao carregar</option>';
+      });
+  }
+
+  estadoSelect?.addEventListener('change', function(){ preencherCidades(this.value, null); });
+
+  if (window.__EDIT__ && window.__EDIT__.estadoId) {
+    preencherCidades(window.__EDIT__.estadoId, window.__EDIT__.cidadeId);
+  }
+})();
+</script>
+
+{% endblock %}

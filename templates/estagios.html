@@ -1,0 +1,413 @@
+{% extends 'base.html' %}
+{% block title %}SGE - Estágios{% endblock %}
+{% block content %}
+
+<style>
+/* ========================================
+   CORREÇÃO UNIVERSAL PARA TEMA ESCURO (replicada de empresas)
+   ======================================== */
+.page-header,
+.hero-section,
+.filter-section,
+.table-card,
+.form-container,
+.stat-card,
+.feature-card,
+.content-box {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+
+.page-title,
+.hero-title,
+.form-title,
+.feature-title,
+.filter-label,
+.form-label,
+.form-label-custom {
+  color: var(--text) !important;
+}
+
+.hero-subtitle,
+.feature-description,
+.stat-label,
+.student-id,
+.company-fantasy {
+  color: var(--text-light) !important;
+}
+
+.table-modern th,
+.table-modern td {
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+
+.table-modern tbody tr:hover {
+  background: rgba(99, 102, 241, 0.05) !important;
+}
+
+input.form-control,
+input.form-control-simple,
+input.form-control-custom,
+textarea.form-control,
+select.form-select,
+select.form-control-custom,
+select.form-control-simple {
+  background: var(--bg-card) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  background: var(--bg-card) !important;
+  border-color: var(--primary) !important;
+  color: var(--text) !important;
+}
+
+body.dark .badge-ativo { background: rgba(16, 185, 129, 0.2) !important; color: #34d399 !important; }
+body.dark .badge-inativo { background: rgba(239, 68, 68, 0.2) !important; color: #f87171 !important; }
+body.dark .badge-trancado { background: rgba(245, 158, 11, 0.2) !important; color: #fbbf24 !important; }
+body.dark .badge-concluido { background: rgba(59, 130, 246, 0.2) !important; color: #60a5fa !important; }
+body.dark .badge-cancelado { background: rgba(239, 68, 68, 0.2) !important; color: #f87171 !important; }
+
+.empty-state { color: var(--text-light) !important; }
+.empty-state h4 { color: var(--text) !important; }
+
+body.dark input::placeholder,
+body.dark select::placeholder {
+  color: var(--text-light) !important;
+  opacity: 0.6;
+}
+
+body.dark select option {
+  background: var(--bg-card);
+  color: var(--text);
+}
+
+.student-name,
+.company-name {
+  color: var(--text) !important;
+}
+</style>
+
+<style>
+  .page-header {
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .page-title {
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .page-title i {
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .filter-section {
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .table-card {
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .table-modern {
+    margin: 0;
+    width: 100%;
+  }
+
+  .table-modern thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
+  .table-modern thead th {
+    padding: 1.25rem 1rem;
+    font-weight: 600;
+    border: none;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    color: white !important;
+    white-space: nowrap;
+  }
+
+  .table-modern tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: all 0.2s ease;
+  }
+
+  .table-modern tbody td {
+    padding: 1.25rem 1rem;
+    vertical-align: middle;
+  }
+
+  .company-cell {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .company-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .avatar-gradient-1 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+  .avatar-gradient-2 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+  .avatar-gradient-3 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+  .avatar-gradient-4 { background: linear-gradient(135deg, #ffa17f 0%, #fecfef 100%); }
+  .avatar-gradient-5 { background: linear-gradient(135deg, #a8edea 0%, #a8c0ff 100%); }
+
+  .company-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .company-name {
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .company-fantasy {
+    font-size: 0.85rem;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .btn-action {
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+  }
+
+  .empty-state i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+  }
+
+  .badge-status {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+  }
+
+  @media (max-width: 768px) {
+    .page-header {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .table-modern {
+      font-size: 0.85rem;
+    }
+
+    .company-cell {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .action-buttons {
+      flex-direction: column;
+    }
+  }
+</style>
+
+<div class="page-header fade-in-up">
+  <h1 class="page-title">
+    <i class="bi bi-clipboard-check"></i>
+    Gerenciar Estágios
+  </h1>
+  <a href="{{ url_for('estagio_novo') }}" class="btn btn-outline-success">
+    <i class="bi bi-plus-circle"></i>
+    Novo Estágio
+  </a>
+</div>
+
+<div class="filter-section fade-in-up">
+  <form method="get" action="{{ url_for('estagios') }}">
+    <div class="row g-3">
+      <div class="col-md-4">
+        <label class="form-label-custom">
+          <i class="bi bi-map"></i> Estado
+        </label>
+        <select id="estado" name="estado" class="form-control-custom form-select">
+          <option value="">Todos os Estados</option>
+          {% for est in estados %}
+            <option value="{{ est.idEstado }}">{{ est.nome }} ({{ est.uf }})</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label-custom">
+          <i class="bi bi-geo-alt"></i> Cidade
+        </label>
+        <select id="cidade" name="cidade" class="form-control-custom form-select">
+          <option value="">Todas as Cidades</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label-custom">
+          <i class="bi bi-funnel"></i> Status
+        </label>
+        <select name="mostrar_inativos" class="form-control-custom form-select">
+          <option value="0" {% if request.args.get('mostrar_inativos') != '1' %}selected{% endif %}>Apenas Ativos</option>
+          <option value="1" {% if request.args.get('mostrar_inativos') == '1' %}selected{% endif %}>Mostrar Inativos</option>
+        </select>
+      </div>
+      <div class="col-md-2 d-flex align-items-end">
+        <button type="submit" class="btn btn-outline-info">
+          <i class="bi bi-funnel"></i>
+          Filtrar
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="table-card fade-in-up">
+  {% if estagios %}
+  <div class="table-responsive">
+    <table class="table-modern">
+        <tr style="text-align: center;">
+          <th>ID</th>
+          <th>Aluno</th>
+          <th>Empresa</th>
+          <th>Data Início</th>
+          <th>Data Fim</th>
+          <th>Situação</th>
+          <th>Desativado</th>
+          <th>Ações</th>
+        </tr>
+      <tbody>
+        {% for e in estagios %}
+        <tr style="text-align: center;">
+          <td><strong>{{ e.idEstagio }}</strong></td>
+          <td>
+            <div class="company-cell">
+              <div class="company-avatar avatar-gradient-{{ (loop.index0 % 5) + 1 }}">
+                <i class="bi bi-person-fill"></i>
+              </div>
+              <div class="company-info">
+                <p class="company-name">{{ e.aluno }}</p>
+                <span class="company-fantasy">{{ e.empresa or 'Sem empresa' }}</span>
+              </div>
+            </div>
+          </td>
+          <td>{{ e.empresa }}</td>
+          <td>{{ e.dataInicio if e.dataInicio else '-' }}</td>
+          <td>{{ e.dataFim if e.dataFim else '-' }}</td>
+          <td>
+            <span class="badge-status badge-{{ e.situacao|lower if e.situacao else 'aguardando' }}">
+              {{ e.situacao or 'Aguardando' }}
+            </span>
+          </td>
+          <td>
+            {% if e.ativo in [0, '0'] %}
+              <span class="badge-status badge-cancelado">SIM</span>
+            {% else %}
+              <span class="badge-status badge-ativo">NÃO</span>
+            {% endif %}
+          </td>
+          <td>
+            <div class="action-buttons">
+              <a href="{{ url_for('estagio_editar', id=e.idEstagio) }}" class="btn btn-outline-secondary">
+                <i class="bi bi-pencil"></i> Editar
+              </a>
+              <form method="post" action="{{ url_for('estagio_desativar', id=e.idEstagio) }}" style="display:inline" onsubmit="event.preventDefault(); showConfirmModal('Desativar Estágio', 'Deseja realmente desativar este estágio?', this);">
+                <button type="submit" class="btn btn-outline-danger">
+                  <i class="bi bi-trash"></i> Desativar
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <i class="bi bi-clipboard"></i>
+    <h4>Nenhum estágio encontrado</h4>
+    <p>Comece cadastrando um novo estágio</p>
+    <a href="{{ url_for('estagio_novo') }}" class="btn-custom btn-primary-custom mt-3">
+      <i class="bi bi-plus-circle"></i>
+      Cadastrar Primeiro Estágio
+    </a>
+  </div>
+  {% endif %}
+</div>
+
+<script>
+document.getElementById('estado').addEventListener('change', function(){
+  const estadoId = this.value;
+  const cidadeSelect = document.getElementById('cidade');
+  cidadeSelect.innerHTML = '<option value="">Carregando...</option>';
+  if(!estadoId) {
+    cidadeSelect.innerHTML = '<option value="">Todas as Cidades</option>';
+    return;
+  }
+  fetch('/api/cidades?estado=' + estadoId)
+    .then(r => r.json())
+    .then(data => {
+      cidadeSelect.innerHTML = '<option value="">Todas as Cidades</option>';
+      data.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.idCidade;
+        opt.text = c.cidade || c.nome;
+        cidadeSelect.appendChild(opt);
+      });
+    });
+});
+</script>
+{% endblock %}

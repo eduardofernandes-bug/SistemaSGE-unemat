@@ -1,0 +1,355 @@
+{% extends 'base.html' %}
+{% block title %}SGE - Início{% endblock %}
+{% block content %}
+
+<style>
+/* ========================================
+   CORREÇÃO UNIVERSAL PARA TEMA ESCURO
+   ======================================== */
+.page-header,
+.hero-section,
+.filter-section,
+.table-card,
+.form-container,
+.stat-card,
+.feature-card,
+.content-box {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+
+.page-title,
+.hero-title,
+.form-title,
+.feature-title,
+.filter-label,
+.form-label,
+.form-label-custom {
+  color: var(--text) !important;
+}
+
+.hero-subtitle,
+.feature-description,
+.stat-label,
+.student-id,
+.company-fantasy {
+  color: var(--text-light) !important;
+}
+
+.table-modern th,
+.table-modern td {
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+
+.table-modern tbody tr:hover {
+  background: rgba(99, 102, 241, 0.05) !important;
+}
+
+input.form-control,
+input.form-control-simple,
+input.form-control-custom,
+textarea.form-control,
+select.form-select,
+select.form-control-custom,
+select.form-control-simple {
+  background: var(--bg-card) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  background: var(--bg-card) !important;
+  border-color: var(--primary) !important;
+  color: var(--text) !important;
+}
+
+.btn-outline-secondary,
+.btn-outline-danger {
+  background: transparent !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+}
+
+.btn-outline-secondary:hover {
+  background: rgba(100, 116, 139, 0.2) !important;
+  border-color: #64748b !important;
+}
+
+.btn-outline-danger:hover {
+  background: rgba(239, 68, 68, 0.2) !important;
+  border-color: var(--danger) !important;
+  color: var(--danger) !important;
+}
+
+body.dark .badge-ativo { background: rgba(16, 185, 129, 0.2) !important; color: #34d399 !important; }
+body.dark .badge-inativo { background: rgba(239, 68, 68, 0.2) !important; color: #f87171 !important; }
+body.dark .badge-trancado { background: rgba(245, 158, 11, 0.2) !important; color: #fbbf24 !important; }
+body.dark .badge-concluido { background: rgba(59, 130, 246, 0.2) !important; color: #60a5fa !important; }
+body.dark .badge-cancelado { background: rgba(239, 68, 68, 0.2) !important; color: #f87171 !important; }
+
+.empty-state { color: var(--text-light) !important; }
+.empty-state h4 { color: var(--text) !important; }
+
+body.dark input::placeholder,
+body.dark select::placeholder {
+  color: var(--text-light) !important;
+  opacity: 0.6;
+}
+
+body.dark select option {
+  background: var(--bg-card);
+  color: var(--text);
+}
+
+.student-name,
+.company-name {
+  color: var(--text) !important;
+}
+
+.stat-number {
+  color: var(--text) !important;
+}
+</style>
+
+<style>
+  .hero-section {
+    border-radius: 20px;
+    padding: 3rem;
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, #0d6efd 0%, #6c757d 50%, #0d6efd 100%);
+    background-size: 200% 100%;
+    animation: gradient 3s ease infinite;
+  }
+
+  @keyframes gradient {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .hero-title {
+    font-size: 3rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #0d6efd 0%, #6c757d 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+  }
+
+  .feature-card {
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    height: 100%;
+    border: 2px solid transparent;
+    cursor: pointer;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 25px rgba(0,0,0,0.15);
+    border-color: var(--primary);
+  }
+
+  .feature-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    margin: 0 auto 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-icon::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: inherit;
+    opacity: 0.2;
+    filter: blur(10px);
+  }
+
+  .feature-icon.purple {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+
+  .feature-icon.pink {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+  }
+
+  .feature-icon.blue {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+  }
+
+  .feature-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+
+  .feature-description {
+    line-height: 1.6;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin: 3rem 0;
+  }
+
+  .stat-card {
+    border-radius: 16px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-1);
+  }
+
+  .stat-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-label {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+  }
+
+  @media (max-width: 768px) {
+    .hero-title { font-size: 2rem; }
+    .hero-subtitle { font-size: 1rem; }
+  }
+</style>
+
+<div class="hero-section fade-in-up">
+  <i class="bi bi-briefcase" style="font-size: 6rem; background: linear-gradient(135deg, #0d6efd 0%, #6c757d 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1rem;"></i>
+  <h1 class="hero-title">Sistema de Gerenciamento de Estágios</h1>
+  <p class="hero-subtitle">Gerencie alunos, empresas e estágios de forma eficiente e moderna</p>
+</div>
+
+<div class="stats-grid fade-in-up">
+  <div class="stat-card">
+    <div class="stat-number">
+      <i class="bi bi-people" style="color: var(--primary);"></i> 
+      <span>{{ stats.total_alunos }}</span>
+    </div>
+    <p class="stat-label">Total de Alunos</p>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number">
+      <i class="bi bi-building" style="color: #ec4899;"></i>
+      <span>{{ stats.total_empresas }}</span>
+    </div>
+    <p class="stat-label">Empresas Parceiras</p>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number">
+      <i class="bi bi-clipboard-check" style="color: var(--info);"></i>
+      <span>{{ stats.estagios_ativos }}</span>
+    </div>
+    <p class="stat-label">Estágios Ativos</p>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number">
+      <i class="bi bi-check-circle" style="color: var(--success);"></i>
+      <span>{{ stats.estagios_concluidos_mes }}</span>
+    </div>
+    <p class="stat-label">Concluídos Este Mês</p>
+  </div>
+</div>
+
+<div class="row g-4 fade-in-up">
+  <div class="col-md-4">
+    <a href="{{ url_for('alunos') }}" style="text-decoration: none;">
+      <div class="feature-card">
+        <div class="feature-icon purple">
+          <i class="bi bi-people-fill"></i>
+        </div>
+        <h3 class="feature-title">Gerenciar Alunos</h3>
+        <p class="feature-description">
+          Cadastre e gerencie informações completas dos alunos, incluindo dados pessoais, matrícula e status acadêmico.
+        </p>
+      </div>
+    </a>
+  </div>
+  
+  <div class="col-md-4">
+    <a href="{{ url_for('empresas') }}" style="text-decoration: none;">
+      <div class="feature-card">
+        <div class="feature-icon pink">
+          <i class="bi bi-building"></i>
+        </div>
+        <h3 class="feature-title">Empresas Parceiras</h3>
+        <p class="feature-description">
+          Mantenha cadastro atualizado das empresas conveniadas, com informações de contato e localização.
+        </p>
+      </div>
+    </a>
+  </div>
+  
+  <div class="col-md-4">
+    <a href="{{ url_for('estagios') }}" style="text-decoration: none;">
+      <div class="feature-card">
+        <div class="feature-icon blue">
+          <i class="bi bi-clipboard-check"></i>
+        </div>
+        <h3 class="feature-title">Controle de Estágios</h3>
+        <p class="feature-description">
+          Acompanhe todos os estágios em andamento, datas, documentação e status de cada acordo firmado.
+        </p>
+      </div>
+    </a>
+  </div>
+</div>
+
+<div class="mt-5 p-4 text-center fade-in-up content-box" style="border-radius: 16px;">
+  <i class="bi bi-filetype-py" style="font-size: 5rem; color: var(--info);"></i>
+  <i class="bi bi-filetype-html" style="font-size: 5rem; color: var(--info);"></i>
+  <i class="bi bi-bootstrap" style="font-size: 5rem; color: var(--info);"></i>
+  <h4 class="mt-3 mb-2" style="font-weight: 700;">Sistema Desenvolvido com Python, HTML e Bootstrap</h4>
+  <p style="margin: 0;">Otimize o gerenciamento de estágios com uma interface moderna e intuitiva.</p>
+  <p style="margin: 0;">Laboratório De Programação Orientada a Objetos - UNEMAT</p>
+</div>
+{% endblock %}
