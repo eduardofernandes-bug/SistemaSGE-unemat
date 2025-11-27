@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 import secrets
 from dotenv import load_dotenv
@@ -9,35 +8,28 @@ from estagio import Estagio
 from localidades import Localidades
 from estatisticas import Estatisticas
 
-# Carrega variáveis de ambiente
 load_dotenv()
 
 app = Flask(__name__)
 
-# Configuração segura da secret key
 app.secret_key = os.getenv('SECRET_KEY', secrets.token_hex(32))
 
-# Configurações de segurança
-app.config['SESSION_COOKIE_SECURE'] = os.getenv('FLASK_ENV') == 'production'  # HTTPS em produção
-app.config['SESSION_COOKIE_HTTPONLY'] = True  # Previne acesso via JavaScript
-app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # Proteção contra CSRF
-app.config['PERMANENT_SESSION_LIFETIME'] = 1800  # 30 minutos de sessão
+app.config['SESSION_COOKIE_SECURE'] = os.getenv('FLASK_ENV') == 'production'
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['PERMANENT_SESSION_LIFETIME'] = 1800
 
-# Desabilita debug em produção
 if os.getenv('FLASK_ENV') == 'production':
     app.config['DEBUG'] = False
 
-# Página inicial
 @app.route("/")
 def index():
     """Página inicial com estatísticas do sistema"""
     try:
-        # Busca todas as estatísticas do banco de dados
         stats = Estatisticas.obter_todas_estatisticas()
         return render_template("index.html", stats=stats)
     except Exception as e:
         app.logger.error(f"Erro ao carregar estatísticas: {e}")
-        # Em caso de erro, passa valores zerados
         stats = {
             'total_alunos': 0,
             'total_empresas': 0,
@@ -47,9 +39,6 @@ def index():
         flash("Erro ao carregar estatísticas do sistema.", "warning")
         return render_template("index.html", stats=stats)
 
-# ---------------------------
-# ALUNOS - views (HTML)
-# ---------------------------
 @app.route("/alunos")
 def alunos():
     try:
@@ -153,9 +142,6 @@ def aluno_desativar(id):
         app.logger.error(f"Erro em aluno_desativar: {e}")
     return redirect(url_for("alunos"))
 
-# ---------------------------
-# EMPRESAS - views (HTML)
-# ---------------------------
 @app.route("/empresas")
 def empresas():
     try:
@@ -250,9 +236,6 @@ def empresa_desativar(id):
         app.logger.error(f"Erro em empresa_desativar: {e}")
     return redirect(url_for("empresas"))
 
-# ---------------------------
-# ESTÁGIOS - views (HTML)
-# ---------------------------
 @app.route("/estagios")
 def estagios():
     try:
@@ -364,9 +347,6 @@ def estagio_desativar(id):
         app.logger.error(f"Erro em estagio_desativar: {e}")
     return redirect(url_for("estagios"))
 
-# ---------------------------
-# API endpoints (JSON)
-# ---------------------------
 @app.route("/api/cidades")
 def api_cidades():
     try:
@@ -427,9 +407,6 @@ def api_estagios():
         app.logger.error(f"Erro em api_estagios: {e}")
         return jsonify({"error": "Erro ao carregar estágios"}), 500
 
-# ---------------------------
-# Tratamento de erros
-# ---------------------------
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('index.html'), 404
@@ -441,7 +418,6 @@ def internal_server_error(e):
     return redirect(url_for("index"))
 
 if __name__ == "__main__":
-    # Em produção, use um servidor WSGI como Gunicorn
     app.run(
         debug=os.getenv('FLASK_DEBUG', 'True') == 'True',
         host='0.0.0.0',
