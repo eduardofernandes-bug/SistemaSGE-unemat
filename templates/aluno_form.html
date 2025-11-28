@@ -175,44 +175,36 @@ body.dark select option {
 
 <div class="form-container fade-in-up">
   <h2 class="form-title">{{ 'Editar Aluno' if aluno else 'Cadastrar Novo Aluno' }}</h2>
-
   <form method="post">
     <div class="row g-3">
       <div class="col-md-6">
         <label class="form-label">Nome</label>
         <input class="form-control-simple form-control" name="nome" required value="{{ aluno.nome if aluno else '' }}">
       </div>
-
       <div class="col-md-6">
         <label class="form-label">Matrícula</label>
         <input class="form-control-simple form-control" name="matricula" required value="{{ aluno.matricula if aluno else '' }}">
       </div>
-
       <div class="col-md-6">
         <label class="form-label">CPF</label>
         <input class="form-control-simple form-control mask-cpf" name="cpf" required value="{{ aluno.CPF if aluno else '' }}">
       </div>
-
       <div class="col-md-6">
         <label class="form-label">Nome institucional</label>
         <input class="form-control-simple form-control" name="nome_institucional" value="{{ aluno.nomeInstitucional if aluno else '' }}">
       </div>
-
       <div class="col-md-6">
         <label class="form-label">Telefone</label>
         <input class="form-control-simple form-control mask-phone" name="telefone" value="{{ aluno.telefone if aluno else '' }}">
       </div>
-
       <div class="col-md-6">
         <label class="form-label">Endereço</label>
         <input class="form-control-simple form-control" name="endereco" value="{{ aluno.endereco if aluno else '' }}">
       </div>
-
       <div class="col-md-6">
         <label class="form-label">Bairro</label>
         <input class="form-control-simple form-control" name="bairro" value="{{ aluno.bairro if aluno else '' }}">
       </div>
-
       <div class="col-md-6">
         <label class="form-label">Período</label>
         <select class="form-control-simple form-select" name="periodo" required>
@@ -223,7 +215,6 @@ body.dark select option {
           <option value="Integral" {% if aluno and aluno.periodo == 'Integral' %}selected{% endif %}>Integral</option>
         </select>
       </div>
-
       <div class="col-md-6">
         <label class="form-label">Status</label>
         <select class="form-control-simple form-select" name="status" required>
@@ -234,7 +225,6 @@ body.dark select option {
           <option value="Concluído" {% if aluno and aluno.statusAluno == 'Concluído' %}selected{% endif %}>Concluído</option>
         </select>
       </div>
-
       <div class="col-md-6">
         <label class="form-label">Estado</label>
         <select id="estado" name="estado_id" class="form-control-simple form-select">
@@ -244,7 +234,6 @@ body.dark select option {
           {% endfor %}
         </select>
       </div>
-
       <div class="col-md-6">
         <label class="form-label">Cidade</label>
         <select id="cidade" name="cidade_id" class="form-control-simple form-select">
@@ -252,7 +241,6 @@ body.dark select option {
         </select>
       </div>
     </div>
-
     <div class="form-actions">
       <button type="submit" class="btn btn-outline-success">
         Salvar

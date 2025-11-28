@@ -9,6 +9,15 @@ class Localidades:
         estados = cursor.fetchall()
         con.close()
         return estados
+    
+    @staticmethod
+    def listar_cidades():
+        con = conectar()
+        cursor = con.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM cidades ORDER BY nome")
+        cidades = cursor.fetchall()
+        con.close()
+        return cidades
 
     @staticmethod
     def listar_cidades_por_estado(id_estado):

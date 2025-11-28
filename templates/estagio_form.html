@@ -131,7 +131,6 @@ select.form-select {
 
   <form method="post">
     <div class="row g-3">
-      <!-- Aluno -->
       <div class="col-md-6">
         <label class="form-label">Aluno</label>
         <select class="form-control-simple form-select" name="aluno_id" required>
@@ -143,8 +142,6 @@ select.form-select {
           {% endfor %}
         </select>
       </div>
-
-      <!-- Empresa -->
       <div class="col-md-6">
         <label class="form-label">Empresa</label>
         <select class="form-control-simple form-select" name="empresa_id" required>
@@ -156,26 +153,18 @@ select.form-select {
           {% endfor %}
         </select>
       </div>
-
-      <!-- Data Início -->
       <div class="col-md-4">
         <label class="form-label">Data Início</label>
         <input class="form-control-simple form-control" type="date" name="data_inicio" value="{% if estagio and estagio.dataInicio %}{{ estagio.dataInicio }}{% endif %}">
       </div>
-
-      <!-- Data Fim -->
       <div class="col-md-4">
         <label class="form-label">Data Fim</label>
         <input class="form-control-simple form-control" type="date" name="data_fim" value="{% if estagio and estagio.dataFim %}{{ estagio.dataFim }}{% endif %}">
       </div>
-
-      <!-- Carga Horária -->
       <div class="col-md-4">
         <label class="form-label">Carga Horária Semanal</label>
         <input class="form-control-simple form-control" type="number" name="carga_horaria" min="1" max="40" value="{% if estagio and estagio.cargaHorariaSemanal %}{{ estagio.cargaHorariaSemanal }}{% endif %}">
       </div>
-
-      <!-- Situação -->
       <div class="col-md-6">
         <label class="form-label">Situação</label>
         <select class="form-control-simple form-select" name="situacao">
@@ -187,8 +176,6 @@ select.form-select {
           <option value="Cancelado" {% if estagio and estagio.situacao == 'Cancelado' %}selected{% endif %}>Cancelado</option>
         </select>
       </div>
-
-      <!-- Status -->
       <div class="col-md-6">
         <label class="form-label">Status</label>
         <select class="form-control-simple form-select" name="status">
@@ -199,26 +186,18 @@ select.form-select {
           <option value="Reprovado" {% if estagio and estagio.statusEstagio == 'Reprovado' %}selected{% endif %}>Reprovado</option>
         </select>
       </div>
-
-      <!-- Supervisor -->
       <div class="col-md-6">
         <label class="form-label">Supervisor</label>
         <input class="form-control-simple form-control" name="supervisor" value="{% if estagio and estagio.supervisor %}{{ estagio.supervisor }}{% endif %}">
       </div>
-
-      <!-- Orientador Acadêmico -->
       <div class="col-md-6">
         <label class="form-label">Orientador Acadêmico</label>
         <input class="form-control-simple form-control" name="orientador" value="{% if estagio and estagio.orientadorAcademico %}{{ estagio.orientadorAcademico }}{% endif %}">
       </div>
-
-      <!-- Setor -->
       <div class="col-md-6">
         <label class="form-label">Setor</label>
         <input class="form-control-simple form-control" name="setor" value="{% if estagio and estagio.setor %}{{ estagio.setor }}{% endif %}">
       </div>
-
-      <!-- Documentação -->
       <div class="col-md-6">
         <label class="form-label">Documentação</label>
         <input class="form-control-simple form-control" name="documentacao" value="{% if estagio and estagio.documentacao %}{{ estagio.documentacao }}{% endif %}">

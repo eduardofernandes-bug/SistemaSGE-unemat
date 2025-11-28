@@ -10,5 +10,5 @@ if __name__ == "__main__":
     print("1. Copie esta chave e cole no arquivo .env")
     print("2. NUNCA compartilhe esta chave publicamente")
     print("3. NUNCA faça commit desta chave no Git")
-    print("4. Gere uma nova chave diferente para produção")
+    print("4. Gere uma nova chave diferente para ambiente de produção")
     print("=" * 80)
