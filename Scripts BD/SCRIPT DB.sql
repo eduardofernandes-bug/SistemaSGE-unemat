@@ -1,25 +1,10 @@
--- MySQL Workbench Forward Engineering
-
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
--- -----------------------------------------------------
--- Schema mydb
--- -----------------------------------------------------
--- -----------------------------------------------------
--- Schema sge
--- -----------------------------------------------------
-
--- -----------------------------------------------------
--- Schema sge
--- -----------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS `sge` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ;
 USE `sge` ;
 
--- -----------------------------------------------------
--- Table `sge`.`estados`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `sge`.`estados` (
   `idEstado` INT NOT NULL AUTO_INCREMENT,
   `nome` VARCHAR(75) NULL DEFAULT NULL,
@@ -30,10 +15,6 @@ AUTO_INCREMENT = 28
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_unicode_ci;
 
-
--- -----------------------------------------------------
--- Table `sge`.`cidades`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `sge`.`cidades` (
   `idCidade` INT NOT NULL AUTO_INCREMENT,
   `nome` VARCHAR(120) NULL DEFAULT NULL,
@@ -50,10 +31,6 @@ AUTO_INCREMENT = 5565
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_unicode_ci;
 
-
--- -----------------------------------------------------
--- Table `sge`.`aluno`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `sge`.`aluno` (
   `idAluno` INT NOT NULL AUTO_INCREMENT,
   `nome` VARCHAR(100) NULL DEFAULT NULL,
@@ -88,10 +65,6 @@ AUTO_INCREMENT = 32
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_unicode_ci;
 
-
--- -----------------------------------------------------
--- Table `sge`.`empresa`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `sge`.`empresa` (
   `idEmpresa` INT NOT NULL AUTO_INCREMENT,
   `razaoSocial` VARCHAR(130) NULL DEFAULT NULL,
@@ -122,10 +95,6 @@ AUTO_INCREMENT = 21
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_unicode_ci;
 
-
--- -----------------------------------------------------
--- Table `sge`.`estagio`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `sge`.`estagio` (
   `idEstagio` INT NOT NULL AUTO_INCREMENT,
   `idAlunoA` INT NOT NULL,
@@ -158,10 +127,6 @@ AUTO_INCREMENT = 79
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_unicode_ci;
 
-
--- -----------------------------------------------------
--- Table `sge`.`usuarios`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `sge`.`usuarios` (
   `idUsuario` INT NOT NULL AUTO_INCREMENT,
   `email` VARCHAR(255) NOT NULL,
