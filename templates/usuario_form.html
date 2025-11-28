@@ -1,0 +1,261 @@
+{% extends 'base.html' %}
+{% block title %}SGE - {{ 'Editar' if usuario else 'Novo' }} Usuário{% endblock %}
+{% block content %}
+
+<style>
+.form-container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2.5rem;
+}
+
+.form-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--border);
+  color: var(--text);
+}
+
+.nivel-card {
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 1rem;
+}
+
+.nivel-card:hover {
+  border-color: var(--primary);
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.nivel-card.selected {
+  border-color: var(--primary);
+  background: rgba(99, 102, 241, 0.1);
+}
+
+.nivel-card input[type="radio"] {
+  display: none;
+}
+
+.nivel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.nivel-nome {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--text);
+}
+
+.nivel-badge {
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.badge-info { background: rgba(59, 130, 246, 0.2); color: #2563eb; }
+.badge-warning { background: rgba(245, 158, 11, 0.2); color: #d97706; }
+.badge-danger { background: rgba(239, 68, 68, 0.2); color: #dc2626; }
+
+.nivel-descricao {
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+.nivel-permissoes {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.nivel-permissoes ul {
+  margin: 0;
+  padding-left: 1.25rem;
+  list-style: none;
+}
+
+.nivel-permissoes li {
+  color: var(--text-light);
+  font-size: 0.85rem;
+  margin: 0.25rem 0;
+}
+
+.nivel-permissoes li::before {
+  content: "✓";
+  color: var(--success);
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
+</style>
+
+<div class="form-container fade-in-up">
+  <h2 class="form-title">
+    <i class="bi bi-person-{{ 'gear' if usuario else 'plus' }}"></i>
+    {{ 'Editar Usuário' if usuario else 'Cadastrar Novo Usuário' }}
+  </h2>
+
+  <form method="post">
+    <div class="row g-3">
+      <div class="col-md-12">
+        <label class="form-label">Nome Completo</label>
+        <input 
+          class="form-control-simple form-control" 
+          name="nome" 
+          required 
+          value="{{ usuario.nome if usuario else '' }}"
+          placeholder="Nome completo do usuário"
+        >
+      </div>
+
+      <div class="col-md-12">
+        <label class="form-label">Email</label>
+        <input 
+          class="form-control-simple form-control" 
+          type="email" 
+          name="email" 
+          required 
+          value="{{ usuario.email if usuario else '' }}"
+          placeholder="email@exemplo.com"
+        >
+      </div>
+
+      <div class="col-md-12">
+        <label class="form-label">
+          Senha 
+          {% if usuario %}
+            <small class="text-muted">(deixe em branco para manter a atual)</small>
+          {% endif %}
+        </label>
+        <input 
+          class="form-control-simple form-control" 
+          type="password" 
+          name="senha" 
+          {% if not usuario %}required{% endif %}
+          minlength="6"
+          placeholder="Mínimo 6 caracteres"
+        >
+      </div>
+
+      <div class="col-md-12">
+        <label class="form-label">Associar ao Aluno (opcional para visualizadores)</label>
+        <select name="id_aluno" class="form-select">
+          <option value="">-- Nenhum --</option>
+          {% for a in alunos %}
+            <option value="{{ a.idAluno }}"
+              {% if usuario and usuario.idAluno == a.idAluno %}selected{% endif %}>
+              {{ a.nome }} ({{ a.matricula }})
+            </option>
+          {% endfor %}
+        </select>
+        <small class="text-muted">Associe este usuário ao registro do aluno para exibir a tela "Meus Estágios".</small>
+      </div>
+
+      <div class="col-md-12">
+        <label class="form-label mb-3">Nível de Acesso</label>
+        
+        <!-- Nível 1: Visualizador -->
+        <label class="nivel-card" for="nivel1">
+          <input type="radio" name="nivel" id="nivel1" value="1" 
+                 {% if not usuario or usuario.nivel == 1 %}checked{% endif %}>
+          <div class="nivel-header">
+            <span class="nivel-nome">
+              <i class="bi bi-eye"></i> Visualizador
+            </span>
+            <span class="nivel-badge badge-info">Nível 1</span>
+          </div>
+          <div class="nivel-descricao">Acesso somente leitura ao sistema</div>
+          <div class="nivel-permissoes">
+            <ul>
+              <li>Visualizar alunos, empresas e estágios</li>
+              <li>Visualizar estatísticas</li>
+              <li>NÃO pode criar, editar ou excluir</li>
+            </ul>
+          </div>
+        </label>
+
+        <!-- Nível 2: Coordenador -->
+        <label class="nivel-card" for="nivel2">
+          <input type="radio" name="nivel" id="nivel2" value="2"
+                 {% if usuario and usuario.nivel == 2 %}checked{% endif %}>
+          <div class="nivel-header">
+            <span class="nivel-nome">
+              <i class="bi bi-kanban"></i> Coordenador
+            </span>
+            <span class="nivel-badge badge-warning">Nível 2</span>
+          </div>
+          <div class="nivel-descricao">Gerenciamento completo de dados acadêmicos</div>
+          <div class="nivel-permissoes">
+            <ul>
+              <li>Todas as permissões do Visualizador</li>
+              <li>Criar, editar e excluir alunos</li>
+              <li>Criar, editar e excluir empresas</li>
+              <li>Criar, editar e excluir estágios</li>
+              <li>NÃO pode gerenciar usuários</li>
+            </ul>
+          </div>
+        </label>
+
+        <!-- Nível 3: Administrador -->
+        <label class="nivel-card" for="nivel3">
+          <input type="radio" name="nivel" id="nivel3" value="3"
+                 {% if usuario and usuario.nivel == 3 %}checked{% endif %}>
+          <div class="nivel-header">
+            <span class="nivel-nome">
+              <i class="bi bi-shield-lock"></i> Administrador
+            </span>
+            <span class="nivel-badge badge-danger">Nível 3</span>
+          </div>
+          <div class="nivel-descricao">Acesso total ao sistema</div>
+          <div class="nivel-permissoes">
+            <ul>
+              <li>Todas as permissões do Coordenador</li>
+              <li>Gerenciar usuários do sistema</li>
+              <li>Configurações avançadas</li>
+              <li>Acesso irrestrito</li>
+            </ul>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="form-actions" style="margin-top: 2rem; padding-top: 1.5rem; border-top: 2px solid var(--border); display: flex; gap: 0.75rem;">
+      <button type="submit" class="btn btn-outline-success">
+        <i class="bi bi-check-circle"></i> Salvar
+      </button>
+      <a href="{{ url_for('usuarios') }}" class="btn btn-outline-danger">
+        <i class="bi bi-x-circle"></i> Cancelar
+      </a>
+    </div>
+  </form>
+</div>
+
+<script>
+// Marca visualmente o nível selecionado
+document.querySelectorAll('.nivel-card input[type="radio"]').forEach(radio => {
+  radio.addEventListener('change', function() {
+    document.querySelectorAll('.nivel-card').forEach(card => {
+      card.classList.remove('selected');
+    });
+    this.closest('.nivel-card').classList.add('selected');
+  });
+  
+  // Marca o inicial
+  if (radio.checked) {
+    radio.closest('.nivel-card').classList.add('selected');
+  }
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+{% block title %}SGE - Gerenciar Usuários{% endblock %}
+{% block content %}
+
+<style>
+.page-header {
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0;
+  color: var(--text);
+}
+
+.table-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+
+}
+.table-modern {
+width: 100%;
+margin: 0;
+}
+.table-modern thead {
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+.table-modern thead th {
+padding: 1.25rem 1rem;
+font-weight: 600;
+border: none;
+text-transform: uppercase;
+font-size: 0.8rem;
+letter-spacing: 0.5px;
+color: white !important;
+}
+.table-modern tbody tr {
+border-bottom: 1px solid var(--border);
+transition: all 0.2s ease;
+}
+.table-modern tbody tr:hover {
+background: rgba(99, 102, 241, 0.05);
+}
+.table-modern tbody td {
+padding: 1.25rem 1rem;
+vertical-align: middle;
+color: var(--text);
+}
+.user-cell {
+display: flex;
+align-items: center;
+gap: 1rem;
+}
+.user-avatar {
+width: 45px;
+height: 45px;
+border-radius: 12px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 1.25rem;
+font-weight: 700;
+color: white;
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+.user-info {
+display: flex;
+flex-direction: column;
+}
+.user-name {
+font-weight: 700;
+color: var(--text);
+}
+.user-email {
+font-size: 0.85rem;
+color: var(--text-light);
+}
+.nivel-badge {
+padding: 0.5rem 1rem;
+border-radius: 20px;
+font-weight: 600;
+font-size: 0.75rem;
+text-transform: uppercase;
+letter-spacing: 0.5px;
+display: inline-flex;
+align-items: center;
+gap: 0.5rem;
+}
+.nivel-info { background: rgba(59, 130, 246, 0.15); color: #2563eb; }
+.nivel-warning { background: rgba(245, 158, 11, 0.15); color: #d97706; }
+.nivel-danger { background: rgba(239, 68, 68, 0.15); color: #dc2626; }
+.badge-ativo { background: rgba(16, 185, 129, 0.15); color: #059669; }
+.badge-inativo { background: rgba(239, 68, 68, 0.15); color: #dc2626; }
+.action-buttons {
+display: flex;
+gap: 0.5rem;
+}
+</style>
+<div class="page-header fade-in-up">
+  <h1 class="page-title">
+    <i class="bi bi-people"></i> Gerenciar Usuários
+  </h1>
+  <a href="{{ url_for('usuario_novo') }}" class="btn btn-outline-success">
+    <i class="bi bi-plus-circle"></i> Novo Usuário
+  </a>
+</div>
+<div class="table-card fade-in-up">
+  {% if usuarios %}
+  <div class="table-responsive">
+    <table class="table-modern">
+        <tr>
+          <th>ID</th>
+          <th>Usuário</th>
+          <th>Nível de Acesso</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      <tbody>
+        {% for u in usuarios %}
+        <tr>
+          <td><strong>{{u.idUsuario}}</strong></td>
+          <td>
+            <div class="user-cell">
+              <div class="user-avatar">
+                {{ u.nome[0]|upper }}
+              </div>
+              <div class="user-info">
+                <span class="user-name">{{ u.nome }}</span>
+                <span class="user-email">{{ u.email }}</span>
+              </div>
+            </div>
+          </td>
+          <td>
+            {% set nivel_info = niveis.get(u.nivel, niveis[1]) %}
+            <span class="nivel-badge nivel-{{ nivel_info.cor }}">
+              <i class="bi bi-{% if u.nivel == 3 %}shield-lock{% elif u.nivel == 2 %}kanban{% else %}eye{% endif %}"></i>
+              {{ nivel_info.nome }}
+            </span>
+          </td>
+          <td>
+            <span class="badge-status badge-{{ 'ativo' if u.ativo else 'inativo' }}">
+              {{ 'Ativo' if u.ativo else 'Inativo' }}
+            </span>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <a href="{{ url_for('usuario_editar', id=u.idUsuario) }}" class="btn btn-outline-secondary">
+                <i class="bi bi-pencil"></i> Editar
+              </a>
+              {% if u.idUsuario != session.usuario_id %}
+              <form method="post" action="{{ url_for('usuario_toggle', id=u.idUsuario) }}" style="display:inline;">
+                <button type="submit"
+                        class="btn btn-sm {% if u.ativo in [0, '0', None] %}btn-outline-success{% else %}btn-outline-danger{% endif %}">
+                  <i class="bi {% if u.ativo in [0, '0', None] %}bi-check-lg{% else %}bi-dash-circle{% endif %}"></i>
+                  {% if u.ativo in [0, '0', None] %}Ativar{% else %}Desativar{% endif %}
+                </button>
+              </form>
+              {% else %}
+              <button class="btn btn-outline-secondary" disabled title="Você não pode desativar seu próprio usuário">
+                <i class="bi bi-lock"></i> Seu Usuário
+              </button>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state" style="text-align: center; padding: 4rem 2rem;">
+    <i class="bi bi-people" style="font-size: 4rem; opacity: 0.5;"></i>
+    <h4>Nenhum usuário encontrado</h4>
+    <p style="color: var(--text-light);">Comece criando o primeiro usuário</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

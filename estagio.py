@@ -280,6 +280,49 @@ class Estagio:
         con.close()
         return rows
 
+    @staticmethod
+    def listar_por_aluno(idAluno, mostrar_inativos=False):
+        """
+        Retorna lista de estágios do aluno (ativos por padrão) com dados do aluno e da empresa,
+        incluindo 'empresa' (nomeFantasia) no dicionário retornado.
+        """
+        con = conectar()
+        cursor = con.cursor(dictionary=True)
+
+        if mostrar_inativos:
+            sql = """
+                SELECT e.idEstagio,
+                a.idAluno, a.nome AS aluno,
+                emp.idEmpresa, emp.nomeFantasia AS empresa,
+                e.idEmpresaE, e.dataInicio, e.dataFim, e.cargaHorariaSemanal,
+                e.situacao, e.statusEstagio, e.ativo, e.supervisor, e.orientadorAcademico
+                FROM estagio e
+                LEFT JOIN aluno a ON e.idAlunoA = a.idAluno
+                LEFT JOIN empresa emp ON e.idEmpresaE = emp.idEmpresa
+                WHERE e.idAlunoA = %s
+                ORDER BY e.dataInicio DESC
+                """
+            params = (idAluno,)
+        else:
+            sql = """
+                SELECT e.idEstagio,
+                a.idAluno, a.nome AS aluno,
+                emp.idEmpresa, emp.nomeFantasia AS empresa,
+                e.idEmpresaE, e.dataInicio, e.dataFim, e.cargaHorariaSemanal,
+                e.situacao, e.statusEstagio, e.ativo, e.supervisor, e.orientadorAcademico
+                FROM estagio e
+                LEFT JOIN aluno a ON e.idAlunoA = a.idAluno
+                LEFT JOIN empresa emp ON e.idEmpresaE = emp.idEmpresa
+                WHERE (e.ativo IS NULL OR e.ativo = 1) AND e.idAlunoA = %s
+                ORDER BY e.dataInicio DESC
+                """
+            params = (idAluno,)
+
+        cursor.execute(sql, params)
+        rows = cursor.fetchall()
+        cursor.close()
+        con.close()
+        return rows
 
     def desativar(self):
         if not self.idEstagio:
@@ -302,3 +345,16 @@ class Estagio:
                 cursor.close()
             if con:
                 con.close()
+
+    def definir_ativo(idEstagio, ativo):
+        con = conectar()
+        cursor = con.cursor()
+        try:
+            cursor.execute("UPDATE estagio SET ativo = %s WHERE idEstagio = %s", (1 if ativo else 0, idEstagio))
+            con.commit()
+            return cursor.rowcount > 0
+        except Exception as e:
+            return False
+        finally:
+            cursor.close()
+            con.close()

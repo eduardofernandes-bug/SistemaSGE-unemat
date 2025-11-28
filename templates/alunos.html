@@ -262,10 +262,12 @@ body.dark select option {
     <i class="bi bi-people-fill"></i>
     Gerenciar Alunos
   </h1>
+  {% if usuario_nivel >= NIVEL_COORDENADOR %}
   <a href="{{ url_for('aluno_novo') }}" class="btn btn-outline-success">
     <i class="bi bi-plus-circle"></i>
     Novo Aluno
   </a>
+  {% endif %}
 </div>
 
 <div class="filter-section fade-in-up">
@@ -366,14 +368,20 @@ body.dark select option {
           </td>
           <td>
             <div class="action-buttons">
+              {% if usuario_nivel >= NIVEL_COORDENADOR %}
               <a href="{{ url_for('aluno_editar', id=a.idAluno) }}" class="btn btn-outline-secondary">
                 <i class="bi bi-pencil"></i> Editar
               </a>
-              <form method="post" action="{{ url_for('aluno_desativar', id=a.idAluno) }}" style="display:inline" onsubmit="event.preventDefault(); showConfirmModal('Desativar Aluno', 'Deseja realmente desativar o aluno {{ a.nome }}?', this);">
-                <button type="submit" class="btn btn-outline-danger">
-                  <i class="bi bi-trash"></i> Desativar
+              {% endif %}
+              {% if usuario_nivel >= NIVEL_ADMIN %}
+              <form method="post" action="{{ url_for('aluno_toggle', id=a.idAluno) }}" style="display:inline;">
+                <button type="submit"
+                        class="btn btn-sm {% if a.ativo in [0, '0', None] %}btn-outline-success{% else %}btn-outline-danger{% endif %}">
+                  <i class="bi {% if a.ativo in [0, '0', None] %}bi-check-lg{% else %}bi-dash-circle{% endif %}"></i>
+                  {% if a.ativo in [0, '0', None] %}Ativar{% else %}Desativar{% endif %}
                 </button>
               </form>
+              {% endif %}
             </div>
           </td>
         </tr>

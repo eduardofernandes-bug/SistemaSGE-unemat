@@ -15,12 +15,12 @@ Sistema web moderno e completo para gerenciamento de estágios em instituições
 - 🎓 **Gerenciamento de Alunos** - Cadastro completo com validações automáticas
 - 🏢 **Empresas Parceiras** - Controle de empresas conveniadas
 - 📋 **Controle de Estágios** - Acompanhamento detalhado de contratos
+- 🧑‍💼 **Gestão de Usuários** - Níveis de acesso: Visualizador, Coordenador e Administrador.
 - 📊 **Dashboard Intuitivo** - Estatísticas em tempo real
 - 🔍 **Filtros Avançados** - Busca por estado, cidade e status
 - 🎨 **Tema Claro/Escuro** - Interface personalizável
 - 📱 **Design Responsivo** - Compatível com dispositivos móveis
 - 🔐 **Segurança** - Boas práticas implementadas
-- 🚀 **API REST** - Endpoints para integração
 
 ---
 
@@ -60,9 +60,15 @@ pip install -r requirements.txt
 
 4. **Configure o banco de dados**
 ```
-Execute os scripts que estão na pastas na seguinte ordem:
-SCRIPT DB, INSERT ESTADOS, INSERT CIDADES
-E para adicionar dados para visualização no sistema execute o INSERT DADOS. 
+Execute os scripts da pasta /Scripts BD na ordem:
+
+SCRIPT DB
+
+INSERT ESTADOS
+
+INSERT CIDADES
+
+INSERT DADOS (opcional para popular o sistema e testar) 
 ```
 
 5. **Configure as variáveis de ambiente**
@@ -98,6 +104,7 @@ sge/
 ├── empresa.py                # Model de Empresa
 ├── estagio.py                # Model de Estágio
 ├── localidades.py            # Model de Estados/Cidades
+├── usuario.py                # Model de Usuários
 ├── estatisticas.py           # Cálculos e métricas
 ├── generate_secret_key.py    # Gerador de chave secreta
 ├── requirements.txt          # Dependências Python
@@ -108,12 +115,17 @@ sge/
 └── templates/                # Templates Jinja2
     ├── base.html             # Layout base
     ├── index.html            # Dashboard principal
+    ├── login.html            # Tela de login
     ├── alunos.html           # Lista de alunos
     ├── aluno_form.html       # Formulário de aluno
     ├── empresas.html         # Lista de empresas
     ├── empresa_form.html     # Formulário de empresa
     ├── estagios.html         # Lista de estágios
-    └── estagio_form.html     # Formulário de estágio
+    ├── estagio_form.html     # Formulário de estágio
+    ├── usuarios.html		  # Lista de usuários
+    ├── usuario_form.html     # Formulário de usuários
+    ├── primeiro_acesso.html  # Cadastro inicial do usuário administrador
+    └── meus_estagios.html    # Visualização dos estágios do aluno
 ```
 
 ---
@@ -121,26 +133,37 @@ sge/
 ## 🎯 Funcionalidades Detalhadas
 
 ### 👨‍🎓 Módulo de Alunos
-- Cadastro com validação de CPF (11 dígitos)
-- Máscaras automáticas para CPF e telefone
-- Campos: nome, matrícula, CPF, telefone, endereço, período, status
-- Filtros por estado, cidade e status (ativo/inativo)
-- Soft delete (desativação sem remoção)
+- Dados completos (nome, matrícula, CPF, telefone, nome institucional, endereço, bairro)
+- Máscaras automáticas (CPF, telefone)
+- Filtros por estado/cidade
+- Ativar/Desativar aluno (com botão alternável)
+- Edição estruturada com layout moderno
 
 ### 🏢 Módulo de Empresas
-- Cadastro com validação opcional de CNPJ (14 dígitos)
-- Máscara automática para CNPJ
-- Campos: razão social, nome fantasia, CNPJ, CEP, endereço
-- Vinculação com localização (estado/cidade)
-- Filtros e sistema de desativação
+- Cadastro com CNPJ + máscara
+- CEP, endereço, bairro, cidade, estado
+- Filtro por UF e cidade
+- Botão ativar/desativar
 
 ### 📋 Módulo de Estágios
-- Vinculação aluno-empresa
-- Controle de datas (início/fim com validação)
-- Carga horária semanal
-- Status detalhado (Aguardando, Ativo, Trancado, Concluído, Cancelado)
-- Informações complementares: supervisor, orientador, setor, documentação
-- Filtros por localização do aluno ou empresa
+- Vínculo aluno/empresa
+- Controle de situação (Aguardando, Ativo, Trancado, Concluído, Cancelado)
+- Carga horária, datas com validação
+- Supervisor, orientador e setor
+- Filtros avançados
+
+### 🧑‍🚀 Módulo de Usuários
+- Níveis completos:
+  - Visualizador (apenas Meus Estágios)
+  - Coordenador (Alunos, Empresas e Estágios)
+  - Administrador (tudo)
+- Usuário não pode desativar a si mesmo
+- Associação opcional de aluno → libera tela Meus Estágios
+
+### 📌 Módulo "Meus Estágios"
+- Exibe dados do estágio do aluno
+- Barra de progresso automática
+- Situação atual
 
 ### 📊 Dashboard
 - Total de alunos ativos
@@ -154,21 +177,11 @@ sge/
 ## 🔐 Segurança
 
 ### ✅ Implementado
-- ✅ Variáveis de ambiente para credenciais sensíveis
-- ✅ SECRET_KEY aleatória gerada com `secrets.token_hex(32)`
-- ✅ Cookies seguros: HttpOnly, SameSite
-- ✅ Prepared statements (previne SQL Injection)
-- ✅ Validação e sanitização de entrada
-- ✅ Sessões com timeout de 30 minutos
-- ✅ Logging de erros
-- ✅ Arquivo `.env` no `.gitignore`
-
-### ⚠️ Recomendações para Produção
-- [ ] Implementar sistema de autenticação/autorização
-- [ ] Configurar HTTPS com certificado SSL
-- [ ] Adicionar rate limiting
-- [ ] Implementar CSRF protection
-- [ ] Sistema de auditoria de ações
+- ✅ SECRET_KEY gerada automaticamente
+- ✅ Prepared Statements (sem SQL injection)
+- ✅ Sessões com expiração
+- ✅ Usuário não pode se autodesativar
+- ✅ .env fora do versionamento
 
 ---
 
@@ -179,10 +192,9 @@ sge/
 | Python | 3.8+ | Backend |
 | Flask | 3.0.0 | Framework web |
 | MySQL | 5.7+ | Banco de dados |
-| Bootstrap | 5.3.0 | Framework CSS |
-| JavaScript | ES6+ | Interatividade |
+| Bootstrap | 5.3.0 | Interface |
 | Jinja2 | 3.1+ | Templates |
-| Gunicorn | 21.2.0 | Servidor WSGI |
+
 
 ---
 
@@ -210,34 +222,6 @@ PORT=5000
 - Em produção: `FLASK_ENV=production` e `FLASK_DEBUG=False`
 
 ---
-
-## 🚀 Deploy em Produção
-
-### Com Gunicorn (Recomendado)
-
-```bash
-# Instale o Gunicorn
-pip install gunicorn
-
-# Execute com 4 workers
-gunicorn -w 4 -b 0.0.0.0:5000 app_flask:app
-```
-
-### Configuração Nginx (Proxy Reverso)
-
-```nginx
-server {
-    listen 80;
-    server_name seu_dominio.com;
-
-    location / {
-        proxy_pass http://127.0.0.1:5000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    }
-}
-```
 
 ---
 
@@ -298,14 +282,6 @@ python generate_secret_key.py
 - Confirme que `/api/cidades` está funcionando
 - Verifique se existem dados na tabela `cidades`
 
----
-
-## 📚 Documentação Completa
-
-Para documentação detalhada com guias passo-a-passo, consulte:
-- [DOCUMENTATION.md](DOCUMENTATION.md) - Documentação completa do sistema
-
----
 
 ## 🤝 Contribuindo
 
@@ -320,7 +296,6 @@ Contribuições são bem-vindas! Por favor:
 ### Padrões de Código
 - Siga PEP 8 para Python
 - Docstrings em português
-- Comentários explicativos
 - Validações nos models
 - Tratamento de erros
 
@@ -334,11 +309,11 @@ Este projeto foi desenvolvido para fins **educacionais** no **Laboratório de Pr
 
 ## 👥 Autores
 
-**Desenvolvido por:** [Seu Nome/Equipe]  
+**Desenvolvido por:** Eduardo Fernandes, João Victor e Leonardo Miranda
 **Instituição:** UNEMAT - Universidade do Estado de Mato Grosso  
-**Disciplina:** Laboratório de Programação Orientada a Objetos  
-**Professor:** [Nome do Professor]  
-**Período:** 2024/2025
+**Disciplina:** Laboratório de Programação Orientada a Objetos - LPOO  
+**Professor:** Carlos Alex Sander Juvencio Gulo  
+**Período:** 2025/2 - 5º Semestre | Ciência da Computação
 
 ---
 
@@ -349,35 +324,27 @@ Este projeto foi desenvolvido para fins **educacionais** no **Laboratório de Pr
 - Bootstrap Team
 - Todos os contribuidores
 
----
-
-## 📞 Contato e Suporte
-
-- **Email**: seu_email@exemplo.com
-- **GitHub Issues**: [Link do repositório]
-- **Documentação**: [Link da documentação]
 
 ---
 
 ## 🔄 Changelog
 
-### v1.0.0 - Inicial (2024/2025)
-- ✅ Sistema completo de gerenciamento
-- ✅ CRUD de alunos, empresas e estágios
-- ✅ Dashboard com estatísticas
-- ✅ Filtros por localização
-- ✅ Tema claro/escuro com persistência
-- ✅ Design responsivo
-- ✅ Validações e máscaras
-- ✅ Soft delete
-- ✅ API REST
+### v1.1.0 - Atual
+- ✅ Tema escuro/claro completo
+- ✅ Novo layout moderno em todas as telas
+- ✅ Tela de Primeiro Acesso
+- ✅ Botão ativar/desativar para todos os módulos
+- ✅ Melhoria nos formulários (validações e máscaras)
+- ✅ Novo módulo Meus Estágios
+- ✅ Dashboard remodelado
+- ✅ Filtros avançados por estado/cidade
+- ✅ Ajustes na segurança
+- ✅ Melhorias de UI/UX
 
-### Próximas Versões
-- [ ] Sistema de autenticação
-- [ ] Relatórios em PDF
-- [ ] Gráficos avançados
-- [ ] Notificações por email
-- [ ] Upload de documentos
+### v1.0.0 - Inicial
+- ✅ Estrutura básica com CRUDs
+- ✅ Dashboard simples
+- ✅ Temas e filtros iniciais
 
 ---
 

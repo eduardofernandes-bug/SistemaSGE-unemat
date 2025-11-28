@@ -272,3 +272,18 @@ class Aluno:
                 cursor.close()
             if con:
                 con.close()
+    
+    def definir_ativo(idAluno, ativo):
+        """Define 1 (ativo) ou 0 (inativo) para o aluno."""
+        con = conectar()
+        cursor = con.cursor()
+        try:
+            cursor.execute("UPDATE aluno SET ativo = %s WHERE idAluno = %s", (1 if ativo else 0, idAluno))
+            con.commit()
+            return cursor.rowcount > 0
+        except Exception as e:
+            # log se quiser
+            return False
+        finally:
+            cursor.close()
+            con.close()

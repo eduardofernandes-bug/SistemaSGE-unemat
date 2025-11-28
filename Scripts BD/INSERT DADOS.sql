@@ -1,62 +1,71 @@
+-- Inserções atualizadas para SCRIPT DB v4
+-- Arquivo original: INSERT DADOS.sql. Ajustado para o schema sge e colunas do SCRIPT DB v4. :contentReference[oaicite:0]{index=0}
+-- Referência do script DDL: SCRIPT DB v4.sql. :contentReference[oaicite:1]{index=1}
 
 -- ---------- ALUNOS (30)
-INSERT INTO aluno (nome, matricula, CPF, nomeInstitucional, telefone, periodo, statusAluno, endereco, bairro, idCidade_Cidades, idEstadoE_Cidades) VALUES
-('Ana Paula Silva', '2025001', '12345678901', 'Ana P. Silva', '65991234567', 'Matutino', 'Ativo', 'Rua A, 120', 'Jardim Primavera', 1383, 13),
-('Carlos Roberto Souza', '2025002', '98765432100', 'Carlos R. Souza', '65999887766', 'Noturno', 'Ativo', 'Av. Central, 455', 'Centro', 1455, 13),
-('Mariana Costa', '2025003', '45678912300', 'Mariana Costa', '65996543210', 'Vespertino', 'Trancado', 'Rua Ipê, 78', 'Vila Nova', 1483, 13),
-('João Henrique Lima', '2025004', '32165498700', 'João H. Lima', '65998001122', 'Integral', 'Ativo', 'Rua B, 300', 'Boa Esperança', 1474, 13),
-('Fernanda Oliveira', '2025005', '15975346800', 'Fernanda O.', '65997001122', 'Matutino', 'Concluído', 'Av. Cuiabá, 999', 'Centro Sul', 1473, 13),
-('Lucas Mendes', '2025006', '25814736900', 'Lucas M.', '65991112233', 'Vespertino', 'Ativo', 'Rua das Flores, 12', 'Jardim América', 78, 8),
-('Beatriz Alves', '2025007', '36925814700', 'Beatriz A.', '65993322110', 'Matutino', 'Ativo', 'Rua C, 75', 'Jardim Paulista', 882, 7),
-('Rafael Sousa', '2025008', '74185296300', 'Rafael S.', '65994455667', 'Noturno', 'Ativo', 'Av. Leste, 200', 'Vila Rica', 1383, 13),
-('Patrícia Gomes', '2025009', '85236974100', 'Patrícia G.', '65995566778', 'Matutino', 'Ativo', 'Rua D, 10', 'Vila Nova', 616, 5),
-('André Lima', '2025010', '96385274100', 'André L.', '65996677889', 'Noturno', 'Trancado', 'Rua E, 220', 'Bela Vista', 1506, 12),
-('Marcos Vinicius', '2025011', '14725836900', 'Marcos V.', '65997788990', 'Integral', 'Ativo', 'Rua F, 33', 'Jardim Europa', 1383, 13),
-('Sofia Ribeiro', '2025012', '25836914700', 'Sofia R.', '65998899001', 'Vespertino', 'Ativo', 'Rua G, 67', 'Centro', 78, 8),
-('Thiago Pereira', '2025013', '36914725800', 'Thiago P.', '65999900112', 'Noturno', 'Ativo', 'Av. Brasil, 120', 'Centro Norte', 882, 7),
-('Clara Mendes', '2025014', '74136985200', 'Clara M.', '65990011223', 'Matutino', 'Ativo', 'Rua H, 5', 'Vila Rica', 1383, 13),
-('Eduardo Fernandes', '2025015', '85214796300', 'Eduardo F.', '65991122334', 'Integral', 'Ativo', 'Av. Principal, 50', 'Centro', 1455, 13),
-('Bruna Santos', '2025016', '96374125800', 'Bruna S.', '65992233445', 'Vespertino', 'Concluído', 'Rua I, 88', 'Jardim Acácias', 1473, 13),
-('Igor Fernandes', '2025017', '15948623700', 'Igor F.', '65993344556', 'Noturno', 'Ativo', 'Rua J, 12', 'Bairro Novo', 1483, 13),
-('Larissa Rocha', '2025018', '35715948600', 'Larissa R.', '65994455667', 'Matutino', 'Ativo', 'Av. das Nações, 400', 'Jardim América', 1383, 13),
-('Vitor Hugo', '2025019', '45612378900', 'Vitor H.', '65995566778', 'Vespertino', 'Ativo', 'Rua K, 90', 'Vila Santa', 1474, 13),
-('Letícia Martins', '2025020', '65498732100', 'Letícia M.', '65996677889', 'Noturno', 'Ativo', 'Rua L, 18', 'Centro Oeste', 1506, 12),
-('Gabriel Souza', '2025021', '32198765400', 'Gabriel S.', '65997788990', 'Matutino', 'Ativo', 'Rua M, 210', 'Vila Rica', 1383, 13),
-('Aline Castro', '2025022', '78945612300', 'Aline C.', '65998899001', 'Integral', 'Trancado', 'Rua N, 77', 'Jardim Primavera', 78, 8),
-('Diego Alves', '2025023', '21354687900', 'Diego A.', '65999900112', 'Vespertino', 'Ativo', 'Av. Sergipe, 123', 'Centro', 1455, 13),
-('Rosa Pereira', '2025024', '54687921300', 'Rosa P.', '65990011223', 'Matutino', 'Concluído', 'Rua O, 5', 'Bairro Novo', 616, 5),
-('Paulo César', '2025025', '67891234500', 'Paulo C.', '65991122334', 'Integral', 'Ativo', 'Rua P, 333', 'Vila Verde', 1483, 13),
-('Camila Nunes', '2025026', '89012345600', 'Camila N.', '65992233445', 'Vespertino', 'Ativo', 'Rua Q, 44', 'Jardim Ouro', 882, 7),
-('Roberto Lima', '2025027', '10293847566', 'Roberto L.', '65993344556', 'Noturno', 'Ativo', 'Av. Planalto, 60', 'Centro Sul', 1383, 13),
-('Marta Silva', '2025028', '56473829100', 'Marta S.', '65994455667', 'Matutino', 'Ativo', 'Rua R, 2', 'Vila Nova', 1474, 13),
-('Felipe Rocha', '2025029', '83726194500', 'Felipe R.', '65995566778', 'Integral', 'Ativo', 'Rua S, 19', 'Jardim Cedro', 1506, 12),
-('Helena Costa', '2025030', '91827364500', 'Helena C.', '65996677889', 'Vespertino', 'Ativo', 'Rua T, 7', 'Vila Santa', 616, 5);
+INSERT INTO `sge`.`aluno` (
+  nome, matricula, CPF, nomeInstitucional, telefone, periodo, statusAluno, endereco, bairro, idCidade_Cidades, idEstadoE_Cidades, ativo
+) VALUES
+('Ana Paula Silva', '2025001', '12345678901', 'Ana P. Silva', '65991234567', 'Matutino', 'Ativo', 'Rua A, 120', 'Jardim Primavera', 1383, 13, 1),
+('Carlos Roberto Souza', '2025002', '98765432100', 'Carlos R. Souza', '65999887766', 'Noturno', 'Ativo', 'Av. Central, 455', 'Centro', 1455, 13, 1),
+('Mariana Costa', '2025003', '45678912300', 'Mariana Costa', '65996543210', 'Vespertino', 'Trancado', 'Rua Ipê, 78', 'Vila Nova', 1483, 13, 1),
+('João Henrique Lima', '2025004', '32165498700', 'João H. Lima', '65998001122', 'Integral', 'Ativo', 'Rua B, 300', 'Boa Esperança', 1474, 13, 1),
+('Fernanda Oliveira', '2025005', '15975346800', 'Fernanda O.', '65997001122', 'Matutino', 'Concluído', 'Av. Cuiabá, 999', 'Centro Sul', 1473, 13, 1),
+('Lucas Mendes', '2025006', '25814736900', 'Lucas M.', '65991112233', 'Vespertino', 'Ativo', 'Rua das Flores, 12', 'Jardim América', 78, 8, 1),
+('Beatriz Alves', '2025007', '36925814700', 'Beatriz A.', '65993322110', 'Matutino', 'Ativo', 'Rua C, 75', 'Jardim Paulista', 882, 7, 1),
+('Rafael Sousa', '2025008', '74185296300', 'Rafael S.', '65994455667', 'Noturno', 'Ativo', 'Av. Leste, 200', 'Vila Rica', 1383, 13, 1),
+('Patrícia Gomes', '2025009', '85236974100', 'Patrícia G.', '65995566778', 'Matutino', 'Ativo', 'Rua D, 10', 'Vila Nova', 616, 5, 1),
+('André Lima', '2025010', '96385274100', 'André L.', '65996677889', 'Noturno', 'Trancado', 'Rua E, 220', 'Bela Vista', 1506, 12, 1),
+('Marcos Vinicius', '2025011', '14725836900', 'Marcos V.', '65997788990', 'Integral', 'Ativo', 'Rua F, 33', 'Jardim Europa', 1383, 13, 1),
+('Sofia Ribeiro', '2025012', '25836914700', 'Sofia R.', '65998899001', 'Vespertino', 'Ativo', 'Rua G, 67', 'Centro', 78, 8, 1),
+('Thiago Pereira', '2025013', '36914725800', 'Thiago P.', '65999900112', 'Noturno', 'Ativo', 'Av. Brasil, 120', 'Centro Norte', 882, 7, 1),
+('Clara Mendes', '2025014', '74136985200', 'Clara M.', '65990011223', 'Matutino', 'Ativo', 'Rua H, 5', 'Vila Rica', 1383, 13, 1),
+('Eduardo Fernandes', '2025015', '85214796300', 'Eduardo F.', '65991122334', 'Integral', 'Ativo', 'Av. Principal, 50', 'Centro', 1455, 13, 1),
+('Bruna Santos', '2025016', '96374125800', 'Bruna S.', '65992233445', 'Vespertino', 'Concluído', 'Rua I, 88', 'Jardim Acácias', 1473, 13, 1),
+('Igor Fernandes', '2025017', '15948623700', 'Igor F.', '65993344556', 'Noturno', 'Ativo', 'Rua J, 12', 'Bairro Novo', 1483, 13, 1),
+('Larissa Rocha', '2025018', '35715948600', 'Larissa R.', '65994455667', 'Matutino', 'Ativo', 'Av. das Nações, 400', 'Jardim América', 1383, 13, 1),
+('Vitor Hugo', '2025019', '45612378900', 'Vitor H.', '65995566778', 'Vespertino', 'Ativo', 'Rua K, 90', 'Vila Santa', 1474, 13, 1),
+('Letícia Martins', '2025020', '65498732100', 'Letícia M.', '65996677889', 'Noturno', 'Ativo', 'Rua L, 18', 'Centro Oeste', 1506, 12, 1),
+('Gabriel Souza', '2025021', '32198765400', 'Gabriel S.', '65997788990', 'Matutino', 'Ativo', 'Rua M, 210', 'Vila Rica', 1383, 13, 1),
+('Aline Castro', '2025022', '78945612300', 'Aline C.', '65998899001', 'Integral', 'Trancado', 'Rua N, 77', 'Jardim Primavera', 78, 8, 1),
+('Diego Alves', '2025023', '21354687900', 'Diego A.', '65999900112', 'Vespertino', 'Ativo', 'Av. Sergipe, 123', 'Centro', 1455, 13, 1),
+('Rosa Pereira', '2025024', '54687921300', 'Rosa P.', '65990011223', 'Matutino', 'Concluído', 'Rua O, 5', 'Bairro Novo', 616, 5, 1),
+('Paulo César', '2025025', '67891234500', 'Paulo C.', '65991122334', 'Integral', 'Ativo', 'Rua P, 333', 'Vila Verde', 1483, 13, 1),
+('Camila Nunes', '2025026', '89012345600', 'Camila N.', '65992233445', 'Vespertino', 'Ativo', 'Rua Q, 44', 'Jardim Ouro', 882, 7, 1),
+('Roberto Lima', '2025027', '10293847566', 'Roberto L.', '65993344556', 'Noturno', 'Ativo', 'Av. Planalto, 60', 'Centro Sul', 1383, 13, 1),
+('Marta Silva', '2025028', '56473829100', 'Marta S.', '65994455667', 'Matutino', 'Ativo', 'Rua R, 2', 'Vila Nova', 1474, 13, 1),
+('Felipe Rocha', '2025029', '83726194500', 'Felipe R.', '65995566778', 'Integral', 'Ativo', 'Rua S, 19', 'Jardim Cedro', 1506, 12, 1),
+('Helena Costa', '2025030', '91827364500', 'Helena C.', '65996677889', 'Vespertino', 'Ativo', 'Rua T, 7', 'Vila Santa', 616, 5, 1);
 
 -- ---------- EMPRESAS (20)
-INSERT INTO empresa (razaoSocial, nomeFantasia, cnpj, cep, endereco, bairro, idCidade_Cidades, idEstadoE_Cidades) VALUES
-('Tech Solutions LTDA', 'TechSol', '12345678000199', '78700000', 'Av. Bandeirantes, 1000', 'Centro', 1383, 13),
-('AgroVale S/A', 'AgroVale', '11222333000144', '78705000', 'Rua Goiás, 450', 'Jardim Tropical', 1455, 13),
-('InfoMakers Tecnologia', 'InfoMakers', '99887766000155', '78710000', 'Rua Amazonas, 250', 'Vila Aurora', 1483, 13),
-('Hospital Vida e Saúde', 'Hospital VS', '55667788000109', '78720000', 'Av. Dom Pedro II, 770', 'Centro Médico', 1474, 13),
-('Comercial Ribeiro Ltda', 'Ribeiro', '44332211000188', '78730000', 'Rua Bahia, 600', 'Jardim Ouro Branco', 1473, 13),
-('SoftBuild Sistemas', 'SoftBuild', '33445566000177', '78740000', 'Av. Software, 120', 'TecnoPark', 78, 8),
-('AgroTech Distrib.', 'AgroTech', '22113344000166', '78745000', 'Rod. BR-163, Km 10', 'Zona Rural', 1506, 12),
-('LogiTrans Ltda', 'LogiTrans', '66778899000122', '78750000', 'Av. Logística, 90', 'Distrito Industrial', 616, 5),
-('EducaMais Instituição', 'EducaMais', '55443322000133', '78755000', 'Rua Educação, 11', 'Vila Educação', 882, 7),
-('Construtora Alfa', 'Construtora Alfa', '77665544000100', '78760000', 'Av. Constr., 300', 'Bairro Constr.', 1383, 13),
-('Mercado Bom Preço', 'BomPreço', '88990011000166', '78765000', 'Rua Comércio, 45', 'Centro', 1455, 13),
-('Green Agro', 'GreenAgro', '99880011000177', '78770000', 'Faz. Boa Vista, S/N', 'Zona Rural', 1483, 13),
-('Clinica Saúde Plus', 'SaúdePlus', '22334455000188', '78775000', 'Av. Saúde, 222', 'Centro Médico', 1474, 13),
-('Design Studio LTDA', 'DesignPro', '33447788000199', '78780000', 'Rua Criativa, 9', 'Jardim Design', 78, 8),
-('Cafeteria Central', 'CafeCia', '44556677000155', '78785000', 'Rua Aroma, 14', 'Centro', 616, 5),
-('Oficina Mecânica Silva', 'Oficina Silva', '55667799000144', '78790000', 'Rua do Mecânico, 5', 'Bairro Industrial', 1506, 12),
-('Transportes Rápidos', 'TransRapido', '66779900112233', '78795000', 'Av. Transportes, 1', 'Distrito Log.', 1383, 13),
-('Agência Consultiva', 'Consultiva', '77881199000100', '78800000', 'Rua Consultoria, 60', 'Centro', 882, 7),
-('Studio Fotográfico', 'FotoStudio', '88992211000188', '78805000', 'Rua Luz, 27', 'Vila Foto', 1473, 13),
-('Loja Virtual XYZ', 'LojaXYZ', '99001122334455', '78810000', 'Rua E-commerce, 88', 'Centro', 1483, 13);
+INSERT INTO `sge`.`empresa` (
+  razaoSocial, nomeFantasia, cnpj, cep, endereco, bairro, idCidade_Cidades, idEstadoE_Cidades, ativo
+) VALUES
+('Tech Solutions LTDA', 'TechSol', '12345678000199', '78700000', 'Av. Bandeirantes, 1000', 'Centro', 1383, 13, 1),
+('AgroVale S/A', 'AgroVale', '11222333000144', '78705000', 'Rua Goiás, 450', 'Jardim Tropical', 1455, 13, 1),
+('InfoMakers Tecnologia', 'InfoMakers', '99887766000155', '78710000', 'Rua Amazonas, 250', 'Vila Aurora', 1483, 13, 1),
+('Hospital Vida e Saúde', 'Hospital VS', '55667788000109', '78720000', 'Av. Dom Pedro II, 770', 'Centro Médico', 1474, 13, 1),
+('Comercial Ribeiro Ltda', 'Ribeiro', '44332211000188', '78730000', 'Rua Bahia, 600', 'Jardim Ouro Branco', 1473, 13, 1),
+('SoftBuild Sistemas', 'SoftBuild', '33445566000177', '78740000', 'Av. Software, 120', 'TecnoPark', 78, 8, 1),
+('AgroTech Distrib.', 'AgroTech', '22113344000166', '78745000', 'Rod. BR-163, Km 10', 'Zona Rural', 1506, 12, 1),
+('LogiTrans Ltda', 'LogiTrans', '66778899000122', '78750000', 'Av. Logística, 90', 'Distrito Industrial', 616, 5, 1),
+('EducaMais Instituição', 'EducaMais', '55443322000133', '78755000', 'Rua Educação, 11', 'Vila Educação', 882, 7, 1),
+('Construtora Alfa', 'Construtora Alfa', '77665544000100', '78760000', 'Av. Constr., 300', 'Bairro Constr.', 1383, 13, 1),
+('Mercado Bom Preço', 'BomPreço', '88990011000166', '78765000', 'Rua Comércio, 45', 'Centro', 1455, 13, 1),
+('Green Agro', 'GreenAgro', '99880011000177', '78770000', 'Faz. Boa Vista, S/N', 'Zona Rural', 1483, 13, 1),
+('Clinica Saúde Plus', 'SaúdePlus', '22334455000188', '78775000', 'Av. Saúde, 222', 'Centro Médico', 1474, 13, 1),
+('Design Studio LTDA', 'DesignPro', '33447788000199', '78780000', 'Rua Criativa, 9', 'Jardim Design', 78, 8, 1),
+('Cafeteria Central', 'CafeCia', '44556677000155', '78785000', 'Rua Aroma, 14', 'Centro', 616, 5, 1),
+('Oficina Mecânica Silva', 'Oficina Silva', '55667799000144', '78790000', 'Rua do Mecânico, 5', 'Bairro Industrial', 1506, 12, 1),
+('Transportes Rápidos', 'TransRapido', '66779900112233', '78795000', 'Av. Transportes, 1', 'Distrito Log.', 1383, 13, 1),
+('Agência Consultiva', 'Consultiva', '77881199000100', '78800000', 'Rua Consultoria, 60', 'Centro', 882, 7, 1),
+('Studio Fotográfico', 'FotoStudio', '88992211000188', '78805000', 'Rua Luz, 27', 'Vila Foto', 1473, 13, 1),
+('Loja Virtual XYZ', 'LojaXYZ', '99001122334455', '78810000', 'Rua E-commerce, 88', 'Centro', 1483, 13, 1);
 
 -- ---------- ESTÁGIOS (80)
-INSERT INTO estagio (idAlunoA, idEmpresaE, dataInicio, dataFim, cargaHorariaSemanal, situacao, supervisor, orientadorAcademico, setor, documentacao, statusEstagio, ativo) VALUES
+INSERT INTO `sge`.`estagio` (
+  idAlunoA, idEmpresaE, dataInicio, dataFim, cargaHorariaSemanal, situacao, supervisor, orientadorAcademico, setor, documentacao, statusEstagio, ativo
+) VALUES
 (1,1,'2025-02-01','2025-07-01',30,'Ativo','Marcelo Dutra','Prof. André Silva','Desenvolvimento','Completa','Aprovado',1),
 (2,3,'2025-01-15','2025-06-15',20,'Aguardando','Fernanda Lopes','Prof. Beatriz Costa','Suporte Técnico','Parcial','EmAnalise',1),
 (3,2,'2024-08-01','2025-01-30',25,'Concluido','Paulo César','Prof. João Mendes','Administração','Completa','Aprovado',1),
@@ -135,3 +144,5 @@ INSERT INTO estagio (idAlunoA, idEmpresaE, dataInicio, dataFim, cargaHorariaSema
 (26,18,'2024-12-12','2025-06-12',25,'Concluido','Supervisor BH','Prof. BH','Consultoria','Completa','Aprovado',1),
 (27,19,'2024-02-02','2024-08-02',30,'Concluido','Supervisor BI','Prof. BI','Fotografia','Completa','Aprovado',1),
 (28,20,'2025-03-03',NULL,20,'Ativo','Supervisor BJ','Prof. BJ','E-commerce','Pendente','Pendente',1);
+
+-- Fim do arquivo de inserções ajustado para SCRIPT DB v4

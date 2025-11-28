@@ -44,11 +44,16 @@
       --text-light: #94a3b8;
       --border: #1f2a3a;
       --primary: #8b93ff;
+      --primary-dark: #6b75f0;
       --shadow-sm: none;
       --shadow-md: none;
       --shadow-lg: none;
     }
 
+    body.dark .progress-bar {
+    background: linear-gradient(90deg, #3b82f6, #60a5fa);
+    }
+    
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; }
     body {
@@ -184,20 +189,29 @@
 <body>
   <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
     <div class="container-fluid">
+      {% if usuario_nivel == NIVEL_VISUALIZADOR %}
+      <a class="navbar-brand" href="{{ url_for('meus_estagios') }}">
+        <i class="bi bi-briefcase-fill"></i> SGE
+      </a>
+    {% else %}
       <a class="navbar-brand" href="{{ url_for('index') }}">
         <i class="bi bi-briefcase-fill"></i> SGE
       </a>
+    {% endif %}
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
 
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto align-items-center">
+          {% if usuario_nivel >= NIVEL_COORDENADOR %}
           <li class="nav-item">
             <a class="nav-link {% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('index') }}">
               <i class="bi bi-house-door-fill"></i> Início
             </a>
           </li>
+          {% endif %}
+          {% if usuario_nivel >= NIVEL_COORDENADOR %}
           <li class="nav-item">
             <a class="nav-link {% if 'aluno' in request.endpoint %}active{% endif %}" href="{{ url_for('alunos') }}">
               <i class="bi bi-people-fill"></i> Alunos
@@ -211,6 +225,19 @@
           <li class="nav-item">
             <a class="nav-link {% if 'estagio' in request.endpoint %}active{% endif %}" href="{{ url_for('estagios') }}">
               <i class="bi bi-clipboard-check"></i> Estágios
+            </a>
+          </li>
+          {% endif %}
+          {% if usuario_nivel >= NIVEL_ADMIN %}
+          <li class="nav-item">
+            <a class="nav-link {% if 'usuario' in request.endpoint %}active{% endif %}" href="{{ url_for('usuarios') }}">
+              <i class="bi bi-people"></i> Usuários
+            </a>
+          </li>
+          {% endif %}
+          <li class="nav-item">
+            <a class="btn btn-outline-danger ms-2" href="{{ url_for('logout') }}">
+              <i class="bi bi-box-arrow-right"></i> Logout
             </a>
           </li>
         </ul>
@@ -426,5 +453,21 @@ a.btn-new, .btn-new {
       });
     })();
   </script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.progress-bar[data-pct]').forEach(function(el){
+      const v = el.getAttribute('data-pct');
+      if (v !== null) {
+        // força número inteiro entre 0 e 100
+        const n = Math.max(0, Math.min(100, parseInt(v) || 0));
+        el.style.width = n + '%';
+        // atualiza aria-valuenow por segurança (já vem do template, mas ok)
+        el.setAttribute('aria-valuenow', n);
+      }
+    });
+  });
+  </script>
+  
 </body>
 </html>

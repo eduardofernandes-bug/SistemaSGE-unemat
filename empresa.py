@@ -278,3 +278,16 @@ class Empresa:
                 cursor.close()
             if con:
                 con.close()
+
+    def definir_ativo(idEmpresa, ativo):
+        con = conectar()
+        cursor = con.cursor()
+        try:
+            cursor.execute("UPDATE empresa SET ativo = %s WHERE idEmpresa = %s", (1 if ativo else 0, idEmpresa))
+            con.commit()
+            return cursor.rowcount > 0
+        except Exception as e:
+            return False
+        finally:
+            cursor.close()
+            con.close()

@@ -264,10 +264,12 @@ body.dark select option {
     <i class="bi bi-building"></i>
     Gerenciar Empresas
   </h1>
+  {% if usuario_nivel >= NIVEL_COORDENADOR %}
   <a href="{{ url_for('empresa_nova') }}" class="btn btn-outline-success">
     <i class="bi bi-plus-circle"></i>
     Nova Empresa
   </a>
+  {% endif %}
 </div>
 
 <div class="filter-section fade-in-up">
@@ -358,14 +360,18 @@ body.dark select option {
           </td>
           <td>
             <div class="action-buttons">
+              {% if usuario_nivel >= NIVEL_COORDENADOR %}
               <a href="{{ url_for('empresa_editar', id=e.idEmpresa) }}" class="btn btn-outline-secondary">
                 <i class="bi bi-pencil"></i> Editar
               </a>
-              <form method="post" action="{{ url_for('empresa_desativar', id=e.idEmpresa) }}" style="display:inline" onsubmit="event.preventDefault(); showConfirmModal('Desativar Empresa', 'Deseja realmente desativar a empresa {{ e.razaoSocial }}?', this);">
-                <button type="submit" class="btn btn-outline-danger">
-                  <i class="bi bi-trash"></i> Desativar
-                </button>
-              </form>
+              {% endif %}
+              {% if usuario_nivel >= NIVEL_ADMIN %}
+              <form method="post" action="{{ url_for('empresa_toggle', id=e.idEmpresa) }}" style="display:inline;">
+                <button type="submit"
+                        class="btn btn-sm {% if e.ativo in [0, '0', None] %}btn-outline-success{% else %}btn-outline-danger{% endif %}">
+                  <i class="bi {% if e.ativo in [0, '0', None] %}bi-check-lg{% else %}bi-dash-circle{% endif %}"></i>
+                  {% if e.ativo in [0, '0', None] %}Ativar{% else %}Desativar{% endif %}
+              {% endif %}
             </div>
           </td>
         </tr>
