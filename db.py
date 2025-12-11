@@ -15,6 +15,7 @@ def conectar():
             collation='utf8mb4_unicode_ci'
         )
         return connection
+    
     except mysql.connector.Error as err:
         print(f"⚠️ Erro ao conectar ao banco de dados: {err}")
         raise

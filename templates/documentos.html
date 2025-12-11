@@ -137,7 +137,6 @@
         }
     }
 
-    /* ========== CARDS DE TEMPLATE ========== */
     .template-card {
         background: var(--bg-card);
         border: 1px solid var(--border);
@@ -166,7 +165,6 @@
         display: block;
     }
 
-    /* Ícone Word - Azul */
     .template-card.template-word .template-icon {
         background: linear-gradient(135deg, #2b579a 0%, #185abd 100%);
         -webkit-background-clip: text;
@@ -174,7 +172,6 @@
         background-clip: text;
     }
 
-    /* Ícone Excel - Verde */
     .template-card.template-excel .template-icon {
         background: linear-gradient(135deg, #1d6f42 0%, #21a366 100%);
         -webkit-background-clip: text;
@@ -182,7 +179,6 @@
         background-clip: text;
     }
 
-    /* Badge "Template disponível" */
     .template-badge {
         display: inline-flex;
         align-items: center;
@@ -200,7 +196,6 @@
         color: #34d399;
     }
 
-    /* Card de instruções */
     .instructions-card {
         background: rgba(59, 130, 246, 0.08);
         border: 1px solid rgba(59, 130, 246, 0.2);
@@ -246,7 +241,6 @@
         text-decoration: underline;
     }
 
-    /* Seção de documentos gerados */
     .documents-section {
         background: var(--bg-card);
         border: 1px solid var(--border);
@@ -267,7 +261,6 @@
         color: #3b82f6;
     }
 
-    /* Modo escuro específico */
     body.dark .template-card {
         background: var(--bg-card);
         border-color: var(--border);
@@ -278,7 +271,6 @@
     }
 
 
-    /* ========== CARD DE INSTRUÇÕES ========== */
     .how-to-card {
         background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(147, 197, 253, 0.05) 100%);
         border: 2px solid rgba(59, 130, 246, 0.2);
@@ -294,7 +286,6 @@
     box-shadow: 0 8px 24px rgba(59, 130, 246, 0.15);
 }
 
-/* Header do Card */
 .how-to-header {
     background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
     padding: 1.5rem 2rem;
@@ -322,7 +313,6 @@
     margin: 0;
 }
 
-/* Lista de Passos */
 .how-to-steps {
     padding: 2rem;
 }
@@ -348,7 +338,6 @@
     background: linear-gradient(180deg, rgba(59, 130, 246, 0.3) 0%, transparent 100%);
 }
 
-/* Número do Passo */
 .step-number {
     min-width: 40px;
     height: 40px;
@@ -364,7 +353,6 @@
     flex-shrink: 0;
 }
 
-/* Conteúdo do Passo */
 .step-content {
     flex: 1;
     padding-top: 0.5rem;
@@ -377,7 +365,6 @@
     line-height: 1.6;
 }
 
-/* Link nos Passos */
 .step-link {
     color: #3b82f6;
     font-weight: 600;
@@ -393,7 +380,6 @@
     gap: 0.5rem;
 }
 
-/* Badge Inline */
 .badge-inline {
     background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     color: white;
@@ -403,7 +389,6 @@
     font-size: 0.875rem;
 }
 
-/* Opções de Documentos */
 .doc-options {
     display: flex;
     gap: 1rem;
@@ -503,7 +488,6 @@ body.dark .doc-excel {
 </style>
 
 <div class="container-fluid mt-4">
-    <!-- CABEÇALHO IGUAL AO DE ESTÁGIOS -->
     <div class="page-header fade-in-up">
         <h1 class="page-title">
             <i class="bi bi-file-earmark-text"></i>
@@ -511,7 +495,6 @@ body.dark .doc-excel {
         </h1>
     </div>
 
-    <!-- Cards de status dos templates -->
     <div class="row mb-4">
         <div class="col-md-6 mb-3">
             <div class="template-card template-word">
@@ -536,7 +519,6 @@ body.dark .doc-excel {
         </div>
     </div>
 
-    <!-- Como gerar documentos -->
     <div class="how-to-card">
         <div class="how-to-header">
             <div class="how-to-icon">
@@ -584,8 +566,6 @@ body.dark .doc-excel {
         </div>
     </div>
     
-
-    <!-- Documentos gerados -->
     <div class="card table-card">
         <div class="card-header bg-primary text-white">
             <h5 class="mb-0">
@@ -653,4 +633,5 @@ body.dark .doc-excel {
         </div>
     </div>
 </div>
+
 {% endblock %}

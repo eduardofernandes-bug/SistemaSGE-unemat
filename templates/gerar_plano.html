@@ -14,7 +14,6 @@
                     </h4>
                 </div>
                 <div class="card-body">
-                    <!-- Informações do Estágio -->
                     <div class="alert alert-info">
                         <h5><i class="bi bi-info-circle me-2"></i>Estágio Selecionado</h5>
                         <p class="mb-1"><strong>Aluno:</strong> {{ aluno.nome }}</p>
@@ -23,7 +22,6 @@
                     </div>
 
                     <form method="POST" id="formPlano">
-                        <!-- IDENTIFICAÇÃO DO ESTAGIÁRIO -->
                         <h5 class="border-bottom pb-2 mb-3">
                             <i class="bi bi-person me-2"></i>Identificação do Estagiário
                         </h5>
@@ -46,7 +44,6 @@
                             </div>
                         </div>
 
-                        <!-- IDENTIFICAÇÃO DA EMPRESA -->
                         <h5 class="border-bottom pb-2 mb-3">
                             <i class="bi bi-building me-2"></i>Identificação da Empresa
                         </h5>
@@ -70,13 +67,11 @@
                             </div>
                         </div>
 
-                        <!-- CRONOGRAMA DE ATIVIDADES -->
                         <h5 class="border-bottom pb-2 mb-3">
                             <i class="bi bi-calendar-check me-2"></i>Cronograma de Atividades
                         </h5>
                         
                         <div id="cronograma-container">
-                            <!-- Linha 1 -->
                             <div class="row mb-3 cronograma-item">
                                 <div class="col-md-3">
                                     <label class="form-label">Período</label>
@@ -101,7 +96,6 @@
                             <i class="bi bi-plus-circle me-1"></i>Adicionar Atividade
                         </button>
 
-                        <!-- LOCALIZAÇÃO -->
                         <h5 class="border-bottom pb-2 mb-3">
                             <i class="bi bi-geo-alt me-2"></i>Localização
                         </h5>
@@ -114,7 +108,6 @@
                             </div>
                         </div>
 
-                        <!-- BOTÕES -->
                         <div class="d-flex justify-content-between mt-4">
                             <a href="{{ url_for('estagios') if usuario_nivel >= NIVEL_COORDENADOR else url_for('meus_estagios') }}" 
                                class="btn btn-secondary">
@@ -132,7 +125,6 @@
 </div>
 
 <script>
-    // Função para mostrar modal de aviso
     function mostrarAviso(mensagem, tipo = 'warning') {
         const modal = new bootstrap.Modal(document.getElementById('modalAviso'));
         const header = document.getElementById('modalAvisoHeader');
@@ -162,8 +154,6 @@
         modal.show();
     }
     
-    // ========== CRONOGRAMA (Período + Atividade) ==========
-    
     function adicionarAtividade() {
         const container = document.getElementById('cronograma-container');
         if (!container) {
@@ -172,8 +162,7 @@
         }
         
         const totalAtividades = container.querySelectorAll('.cronograma-item').length;
-        
-        // Limite razoável de 20 atividades
+
         if (totalAtividades >= 20) {
             mostrarAviso('Limite máximo de 20 atividades atingido!', 'warning');
             return;
@@ -213,7 +202,6 @@
         btn.closest('.cronograma-item').remove();
     }
     
-    // Validação antes de enviar
     document.getElementById('formPlano')?.addEventListener('submit', function(e) {
         const periodos = document.querySelectorAll('input[name="periodo[]"]');
         const atividades = document.querySelectorAll('textarea[name="atividade[]"]');
@@ -234,7 +222,6 @@
     });
 </script>
     
-<!-- Modal de Avisos -->
 <div class="modal fade" id="modalAviso" tabindex="-1" aria-labelledby="modalAvisoLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -246,7 +233,6 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
             <div class="modal-body" id="modalAvisoMensagem">
-                <!-- Mensagem será inserida aqui via JavaScript -->
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">

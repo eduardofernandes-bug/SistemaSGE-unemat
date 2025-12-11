@@ -337,7 +337,6 @@
   </div>
 
   <script>
-    // Theme Toggle
     (function(){
       const toggle = document.getElementById('themeToggle');
       const icon = document.getElementById('themeIcon');
@@ -357,7 +356,6 @@
       });
     })();
 
-    // Password Strength
     const senhaInput = document.getElementById('senha');
     const strengthBar = document.getElementById('strengthBar');
 
@@ -378,7 +376,6 @@
       }
     });
 
-    // Validação de senha
     document.getElementById('setupForm').addEventListener('submit', function(e){
       const senha = document.getElementById('senha').value;
       const confirma = document.getElementById('confirma_senha').value;
@@ -395,6 +392,8 @@
         return false;
       }
     });
+
   </script>
+  
 </body>
 </html>

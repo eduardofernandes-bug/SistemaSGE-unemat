@@ -99,17 +99,12 @@
   margin-right: 0.5rem;
 }
 
-
-/* ========== CARDS DE NÍVEL CLICÁVEIS ========== */
-
-/* Esconde o radio button original */
 .nivel-radio {
     position: absolute;
     opacity: 0;
     pointer-events: none;
 }
 
-/* Estilo do card */
 .nivel-card {
     display: block;
     background: var(--bg-card);
@@ -121,14 +116,12 @@
     position: relative;
 }
 
-/* Hover no card */
 .nivel-card:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
     border-color: var(--primary);
 }
 
-/* Card SELECIONADO */
 .nivel-radio:checked + .nivel-card {
     background: rgba(59, 130, 246, 0.08);
     border-color: var(--primary);
@@ -136,9 +129,8 @@
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
-/* Ícone de check no canto quando selecionado */
 .nivel-radio:checked + .nivel-card::after {
-    content: '\F26B'; /* Ícone check do Bootstrap Icons */
+    content: '\F26B';
     font-family: 'bootstrap-icons';
     position: absolute;
     top: 10px;
@@ -155,7 +147,6 @@
     font-weight: bold;
 }
 
-/* Modo escuro */
 body.dark .nivel-radio:checked + .nivel-card {
     background: rgba(59, 130, 246, 0.15);
 }
@@ -224,12 +215,10 @@ body.dark .nivel-radio:checked + .nivel-card {
         <small class="text-muted">Associe este usuário ao registro do aluno para exibir a tela "Meus Estágios".</small>
       </div>
 
-<!-- Nível de Acesso -->
 <div class="mb-4">
   <label class="form-label-custom">Nível de Acesso</label>
   
   <div class="row">
-      <!-- Card Visualizador (Nível 1) -->
       <div class="col-12 mb-3">
           <input type="radio" name="nivel" id="nivel1" value="1" class="nivel-radio" {% if usuario and usuario.nivel == 1 %}checked{% endif %} required>
           <label for="nivel1" class="nivel-card">
@@ -248,8 +237,6 @@ body.dark .nivel-radio:checked + .nivel-card {
               </ul>
           </label>
       </div>
-      
-      <!-- Card Coordenador (Nível 2) -->
       <div class="col-12 mb-3">
           <input type="radio" name="nivel" id="nivel2" value="2" class="nivel-radio" {% if usuario and usuario.nivel == 2 %}checked{% endif %}>
           <label for="nivel2" class="nivel-card">
@@ -270,8 +257,6 @@ body.dark .nivel-radio:checked + .nivel-card {
               </ul>
           </label>
       </div>
-      
-      <!-- Card Administrador (Nível 3) -->
       <div class="col-12 mb-3">
           <input type="radio" name="nivel" id="nivel3" value="3" class="nivel-radio" {% if usuario and usuario.nivel == 3 %}checked{% endif %}>
           <label for="nivel3" class="nivel-card">
@@ -293,10 +278,7 @@ body.dark .nivel-radio:checked + .nivel-card {
       </div>
   </div>
 </div>
-
-
-    </div>
-
+  </div>
     <div class="form-actions" style="margin-top: 2rem; padding-top: 1.5rem; border-top: 2px solid var(--border); display: flex; gap: 0.75rem;">
       <button type="submit" class="btn btn-outline-success">
         <i class="bi bi-check-circle"></i> Salvar
@@ -309,7 +291,7 @@ body.dark .nivel-radio:checked + .nivel-card {
 </div>
 
 <script>
-// Marca visualmente o nível selecionado
+
 document.querySelectorAll('.nivel-card input[type="radio"]').forEach(radio => {
   radio.addEventListener('change', function() {
     document.querySelectorAll('.nivel-card').forEach(card => {
@@ -318,7 +300,6 @@ document.querySelectorAll('.nivel-card input[type="radio"]').forEach(radio => {
     this.closest('.nivel-card').classList.add('selected');
   });
   
-  // Marca o inicial
   if (radio.checked) {
     radio.closest('.nivel-card').classList.add('selected');
   }

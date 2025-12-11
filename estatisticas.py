@@ -86,8 +86,6 @@ class Estatisticas:
             'estagios_concluidos_mes': Estatisticas.estagios_concluidos_mes()
         }
     
-    # ========== NOVOS MÉTODOS PARA GRÁFICOS ==========
-    
     @staticmethod
     def estagios_por_situacao():
         """Retorna quantidade de estágios por situação"""

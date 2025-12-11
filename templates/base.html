@@ -186,7 +186,6 @@
     @keyframes slideUp { from{ transform: translateY(20px); opacity:0; } to{ transform: translateY(0); opacity:1; } }
   
 
-    /* ========== PADRONIZAÇÃO DE BOTÕES DE AÇÃO ========== */
     .action-buttons {
       display: flex;
       gap: 0.5rem;
@@ -194,7 +193,6 @@
       flex-wrap: wrap;
     }
 
-    /* Botões com largura fixa */
     .btn-action-fixed {
       min-width: 120px;
       text-align: center;
@@ -205,7 +203,6 @@
       padding: 0.5rem 0.75rem;
     }
 
-    /* Dropdown de documentos (estágios) */
     .action-buttons .btn-group .btn {
       min-width: 140px;
       display: inline-flex;
@@ -214,7 +211,6 @@
       gap: 0.5rem;
     }
 
-    /* Garante que botões dentro de form também tenham largura fixa */
     .action-buttons form {
       display: inline-block;
     }
@@ -228,7 +224,6 @@
       padding: 0.5rem 0.75rem;
     } 
 
-    /* Responsivo */
     @media (max-width: 992px) {
       .action-buttons {
         flex-direction: column;
@@ -529,10 +524,8 @@ a.btn-new, .btn-new {
     document.querySelectorAll('.progress-bar[data-pct]').forEach(function(el){
       const v = el.getAttribute('data-pct');
       if (v !== null) {
-        // força número inteiro entre 0 e 100
         const n = Math.max(0, Math.min(100, parseInt(v) || 0));
         el.style.width = n + '%';
-        // atualiza aria-valuenow por segurança (já vem do template, mas ok)
         el.setAttribute('aria-valuenow', n);
       }
     });
@@ -540,15 +533,12 @@ a.btn-new, .btn-new {
   </script>
 
 <script>
-  // Auto-fechar alertas após 5 segundos
   document.addEventListener('DOMContentLoaded', function() {
       const alerts = document.querySelectorAll('.alert-dismissible');
       
       alerts.forEach(function(alert) {
-          // Define o tempo em milissegundos (5000 = 5 segundos)
           const autoCloseTime = 5000;
           
-          // Cria barra de progresso visual (opcional)
           const progressBar = document.createElement('div');
           progressBar.style.cssText = `
               position: absolute;
@@ -560,7 +550,6 @@ a.btn-new, .btn-new {
               animation: shrinkProgress ${autoCloseTime}ms linear;
           `;
           
-          // Adiciona estilo de animação
           if (!document.getElementById('progress-animation')) {
               const style = document.createElement('style');
               style.id = 'progress-animation';
@@ -578,14 +567,11 @@ a.btn-new, .btn-new {
               document.head.appendChild(style);
           }
           
-          // Adiciona barra de progresso ao alerta
           alert.style.position = 'relative';
           alert.style.overflow = 'hidden';
           alert.appendChild(progressBar);
           
-          // Fecha automaticamente após o tempo definido
           setTimeout(function() {
-              // Usa o método do Bootstrap para fechar
               const bsAlert = new bootstrap.Alert(alert);
               bsAlert.close();
           }, autoCloseTime);

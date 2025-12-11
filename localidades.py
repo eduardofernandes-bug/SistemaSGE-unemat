@@ -1,5 +1,6 @@
 from db import conectar
 
+
 class Localidades:
     @staticmethod
     def listar_estados():

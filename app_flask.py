@@ -301,7 +301,6 @@ def index():
     try:
         stats = Estatisticas.obter_todas_estatisticas()
         
-        # Dados para gráficos
         estagios_situacao = Estatisticas.estagios_por_situacao()
         alunos_status = Estatisticas.alunos_por_status()
         estagios_meses = Estatisticas.estagios_ultimos_6_meses()
@@ -349,8 +348,6 @@ def alunos():
         app.logger.error(f"Erro em /alunos: {e}")
         return redirect(url_for("index"))
 
-# Em app_flask.py - SUBSTITUA a rota /aluno/novo
-
 @app.route("/aluno/novo", methods=["GET", "POST"])
 @login_required
 def aluno_novo():
@@ -376,14 +373,13 @@ def aluno_novo():
             aluno = Aluno(nome, matricula, cpf, nome_inst, telefone, endereco, bairro,
                          periodo, status, idCidade, idEstado)
             
-            # ← MUDANÇA: agora recebe tupla
             sucesso, mensagem = aluno.salvar()
             
             if sucesso:
-                flash(mensagem, "success")  # ← Usa mensagem do retorno
+                flash(mensagem, "success")
                 return redirect(url_for("alunos"))
             else:
-                flash(mensagem, "danger")  # ← Usa mensagem de erro
+                flash(mensagem, "danger")
                 
         except Exception as e:
             flash(f"Erro ao processar cadastro: {str(e)}", "danger")
@@ -391,8 +387,6 @@ def aluno_novo():
     
     return render_template("aluno_form.html", estados=estados, aluno=None)
 
-
-# Em app_flask.py - SUBSTITUA a rota /aluno/<id>/editar
 
 @app.route("/aluno/<int:id>/editar", methods=["GET", "POST"])
 @login_required
@@ -415,7 +409,6 @@ def aluno_editar(id):
             aluno = Aluno(nome, matricula, cpf, nome_inst, telefone, endereco, bairro,
                          periodo, status, idCidade, idEstado, idAluno=id)
             
-            # ← MUDANÇA: agora recebe tupla
             sucesso, mensagem = aluno.editar()
             
             if sucesso:
@@ -489,8 +482,6 @@ def empresas():
         app.logger.error(f"Erro em /empresas: {e}")
         return redirect(url_for("index"))
 
-# Em app_flask.py - SUBSTITUA a rota /empresa/novo
-
 @app.route("/empresa/novo", methods=["GET", "POST"])
 @login_required
 def empresa_nova():
@@ -512,7 +503,6 @@ def empresa_nova():
             
             emp = Empresa(razao, fantasia, cnpj, cep, endereco, bairro, idCidade, idEstado)
             
-            # ← MUDANÇA: agora recebe tupla
             sucesso, mensagem = emp.salvar()
             
             if sucesso:
@@ -526,9 +516,6 @@ def empresa_nova():
             app.logger.error(f"Erro em empresa_nova: {e}")
     
     return render_template("empresa_form.html", estados=estados, empresa=None)
-
-
-# Em app_flask.py - SUBSTITUA a rota /empresa/<id>/editar
 
 @app.route("/empresa/<int:id>/editar", methods=["GET", "POST"])
 @login_required
@@ -547,7 +534,6 @@ def empresa_editar(id):
             
             emp = Empresa(razao, fantasia, cnpj, cep, endereco, bairro, idCidade, idEstado, idEmpresa=id)
             
-            # ← MUDANÇA: agora recebe tupla
             sucesso, mensagem = emp.editar()
             
             if sucesso:
@@ -620,8 +606,6 @@ def estagios():
         app.logger.error(f"Erro em /estagios: {e}")
         return redirect(url_for("index"))
 
-# Em app_flask.py - SUBSTITUA a rota /estagio/novo
-
 @app.route("/estagio/novo", methods=["GET", "POST"])
 @login_required
 def estagio_novo():
@@ -651,7 +635,6 @@ def estagio_novo():
             est = Estagio(idAluno, idEmpresa, data_inicio, data_fim, carga, situacao,
                          supervisor, orientador, setor, documentacao, status)
             
-            # ← MUDANÇA: agora recebe tupla
             sucesso, mensagem = est.salvar()
             
             if sucesso:
@@ -667,8 +650,6 @@ def estagio_novo():
     return render_template("estagio_form.html", estados=estados, alunos=alunos,
                           empresas=empresas, estagio=None)
 
-
-# Em app_flask.py - SUBSTITUA a rota /estagio/<id>/editar
 
 @app.route("/estagio/<int:id>/editar", methods=["GET", "POST"])
 @login_required
@@ -694,7 +675,6 @@ def estagio_editar(id):
             est = Estagio(idAluno, idEmpresa, data_inicio, data_fim, carga, situacao,
                          supervisor, orientador, setor, documentacao, status, idEstagio=id)
             
-            # ← MUDANÇA: agora recebe tupla
             sucesso, mensagem = est.editar()
             
             if sucesso:

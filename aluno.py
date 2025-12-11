@@ -1,58 +1,27 @@
 # -*- coding: utf-8 -*-
-"""
-aluno.py - Model de Aluno com POO completo
-Implementa: Encapsulamento, Herança (de BaseModel), Polimorfismo e Abstração
-"""
 
 import re
 import mysql.connector
 import logging
 from db import conectar
-from base_model import BaseModel  # Importa classe base
+from base_model import BaseModel
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
 def only_digits(s):
-    """Remove tudo que não é dígito"""
     return re.sub(r'\D', '', s or '')
 
 
 class Aluno(BaseModel):
-    """
-    Model de Aluno herdando de BaseModel.
-    
-    Conceitos POO:
-    - Herança: Herda salvar(), editar(), desativar() de BaseModel
-    - Polimorfismo: Sobrescreve métodos abstratos
-    - Encapsulamento: Usa properties para validar CPF e telefone
-    """
     
     def __init__(self, nome=None, matricula=None, cpf=None, nomeInstitucional=None,
                  telefone=None, endereco=None, bairro=None, periodo=None,
                  statusAluno=None, idCidade=None, idEstado=None, idAluno=None):
-        """
-        Inicializa um Aluno.
-        
-        Args:
-            nome: Nome completo do aluno
-            matricula: Matrícula única
-            cpf: CPF (será validado)
-            nomeInstitucional: Nome institucional/social
-            telefone: Telefone de contato
-            endereco: Endereço residencial
-            bairro: Bairro
-            periodo: Período letivo
-            statusAluno: Status acadêmico
-            idCidade: ID da cidade
-            idEstado: ID do estado
-            idAluno: ID do aluno (se já existir)
-        """
-        # Chama construtor da classe base
+
         super().__init__(id_value=idAluno)
         
-        # Atributos privados (encapsulamento)
         self._nome = nome
         self._matricula = matricula
         self._cpf = cpf
@@ -64,8 +33,6 @@ class Aluno(BaseModel):
         self._statusAluno = statusAluno
         self._idCidade = idCidade
         self._idEstado = idEstado
-    
-    # ==================== PROPERTIES (Encapsulamento) ====================
     
     @property
     def idAluno(self):
@@ -171,7 +138,6 @@ class Aluno(BaseModel):
     def idEstado(self):
         return self._idEstado
     
-    # ==================== MÉTODOS MÁGICOS ====================
     
     def __str__(self):
         """Representação em string legível"""
@@ -180,8 +146,6 @@ class Aluno(BaseModel):
     def __repr__(self):
         """Representação para debug"""
         return f"<Aluno id={self._id} nome='{self._nome}' matricula='{self._matricula}'>"
-    
-    # ==================== IMPLEMENTAÇÃO DE MÉTODOS ABSTRATOS (Polimorfismo) ====================
     
     def _get_table_name(self):
         """Retorna nome da tabela"""
@@ -198,59 +162,22 @@ class Aluno(BaseModel):
         Returns:
             tuple: (bool_sucesso, str_mensagem_erro)
         """
-        # Validação de CPF
         try:
-            cpf_digits = self.cpf  # Usa property que já valida
+            cpf_digits = self.cpf
             if not cpf_digits:
                 return False, "CPF é obrigatório"
         except ValueError as e:
             return False, str(e)
         
-        # Validação de telefone
         if self._telefone:
             try:
-                tel_digits = self.telefone  # Usa property
+                tel_digits = self.telefone
             except ValueError as e:
                 return False, str(e)
         
         return True, None
     
     def _get_insert_data(self):
-        """
-        Retorna dados para INSERT.
-        
-        Returns:
-            tuple: (lista_colunas, lista_valores)
-        """
-        colunas = [
-            'nome', 'matricula', 'CPF', 'nomeInstitucional', 'telefone',
-            'endereco', 'bairro', 'periodo', 'statusAluno',
-            'idCidade_Cidades', 'idEstadoE_Cidades'
-        ]
-        
-        valores = [
-            self._nome,
-            self._matricula,
-            self.cpf,  # Usa property (apenas dígitos)
-            self._nomeInstitucional,
-            self.telefone,  # Usa property (apenas dígitos)
-            self._endereco,
-            self._bairro,
-            self._periodo,
-            self._statusAluno,
-            self._idCidade,
-            self._idEstado
-        ]
-        
-        return (colunas, valores)
-    
-    def _get_update_data(self):
-        """
-        Retorna dados para UPDATE.
-        
-        Returns:
-            tuple: (lista_colunas, lista_valores)
-        """
         colunas = [
             'nome', 'matricula', 'CPF', 'nomeInstitucional', 'telefone',
             'endereco', 'bairro', 'periodo', 'statusAluno',
@@ -273,14 +200,31 @@ class Aluno(BaseModel):
         
         return (colunas, valores)
     
-    # ==================== MÉTODOS ESTÁTICOS (mantidos para compatibilidade) ====================
+    def _get_update_data(self):
+        colunas = [
+            'nome', 'matricula', 'CPF', 'nomeInstitucional', 'telefone',
+            'endereco', 'bairro', 'periodo', 'statusAluno',
+            'idCidade_Cidades', 'idEstadoE_Cidades'
+        ]
+        
+        valores = [
+            self._nome,
+            self._matricula,
+            self.cpf,
+            self._nomeInstitucional,
+            self.telefone,
+            self._endereco,
+            self._bairro,
+            self._periodo,
+            self._statusAluno,
+            self._idCidade,
+            self._idEstado
+        ]
+        
+        return (colunas, valores)
     
     @staticmethod
     def listar(mostrar_inativos=False):
-        """
-        Lista alunos do banco.
-        Mantido estático para compatibilidade com código existente.
-        """
         con = conectar()
         cursor = con.cursor(dictionary=True)
         
@@ -318,10 +262,6 @@ class Aluno(BaseModel):
     
     @staticmethod
     def buscar_por_id(idAluno):
-        """
-        Busca aluno por ID.
-        Retorna dicionário para compatibilidade.
-        """
         con = conectar()
         cursor = con.cursor(dictionary=True)
         
@@ -344,16 +284,12 @@ class Aluno(BaseModel):
     
     @classmethod
     def buscar_por_id_objeto(cls, idAluno):
-        """
-        NOVO MÉTODO: Busca aluno e retorna objeto Aluno (não dicionário).
-        Demonstra uso de @classmethod.
-        """
         data = cls.buscar_por_id(idAluno)
         
         if not data:
             return None
         
-        # Cria e retorna instância de Aluno
+
         aluno = cls(
             nome=data['nome'],
             matricula=data['matricula'],
@@ -374,7 +310,6 @@ class Aluno(BaseModel):
     
     @staticmethod
     def listar_por_cidade(idCidade, mostrar_inativos=False):
-        """Lista alunos por cidade (mantido para compatibilidade)"""
         con = conectar()
         cursor = con.cursor(dictionary=True)
         
@@ -406,7 +341,6 @@ class Aluno(BaseModel):
     
     @staticmethod
     def listar_por_estado(idEstado, mostrar_inativos=False):
-        """Lista alunos por estado (mantido para compatibilidade)"""
         con = conectar()
         cursor = con.cursor(dictionary=True)
         

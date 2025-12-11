@@ -293,7 +293,6 @@ body.dark select option {
     .hero-subtitle { font-size: 1rem; }
   }
 
-/* ========== CARDS DE GRÁFICOS ========== */
 .section-title {
     font-size: 1.75rem;
     font-weight: 700;
@@ -450,10 +449,8 @@ canvas {
   </div>
 </div>
 
-<!-- SEÇÃO DE GRÁFICOS -->
     
 <div class="row mt-5">
-  <!-- Cabeçalho com fundo arredondado -->
   <div class="col-12 mb-4">
       <div class="page-header fade-in-up">
           <h2 class="section-title">
@@ -463,8 +460,6 @@ canvas {
       </div>
   </div>
 
-
-  <!-- Gráfico: Estágios por Situação -->
   <div class="col-lg-6 mb-4">
       <div class="chart-card">
           <h5 class="chart-title">
@@ -475,7 +470,6 @@ canvas {
       </div>
   </div>
   
-  <!-- Gráfico: Alunos por Status -->
   <div class="col-lg-6 mb-4">
       <div class="chart-card">
           <h5 class="chart-title">
@@ -486,7 +480,6 @@ canvas {
       </div>
   </div>
   
-  <!-- Gráfico: Evolução (Últimos 6 Meses) -->
   <div class="col-12 mb-4">
       <div class="chart-card">
           <h5 class="chart-title">
@@ -509,40 +502,28 @@ canvas {
   </div>
 </div>
 
-<!-- Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-
-<!-- Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
 <script>
 (function() {
   'use strict';
   
-  // ========== CONFIGURAÇÃO DOS GRÁFICOS ==========
-  
-  // Dados do backend
-  // eslint-disable-next-line
-  // @ts-ignore
   const estagiosSituacao = {{ estagios_situacao | tojson | safe }};
-  // @ts-ignore
   const alunosStatus = {{ alunos_status | tojson | safe }};
-  // @ts-ignore
   const estagiosMeses = {{ estagios_meses | tojson | safe }};
   
-  // Cores para os gráficos
   const coresPrimarias = [
-    '#3b82f6', // Azul
-    '#10b981', // Verde
-    '#f59e0b', // Amarelo
-    '#ef4444', // Vermelho
-    '#8b5cf6', // Roxo
-    '#ec4899', // Rosa
-    '#06b6d4', // Cyan
-    '#f97316'  // Laranja
+    '#3b82f6',
+    '#10b981',
+    '#f59e0b',
+    '#ef4444',
+    '#8b5cf6',
+    '#ec4899',
+    '#06b6d4',
+    '#f97316' 
   ];
   
-  // Função para obter cor do texto baseada no tema
   function getTextColor() {
     return getComputedStyle(document.body).getPropertyValue('--text').trim() || '#1f2937';
   }
@@ -551,7 +532,6 @@ canvas {
     return getComputedStyle(document.body).getPropertyValue('--text-light').trim() || '#6b7280';
   }
   
-  // ========== GRÁFICO 1: Estágios por Situação (Pizza) ==========
   const ctxSituacao = document.getElementById('chartEstagiosSituacao');
   if (ctxSituacao && estagiosSituacao && estagiosSituacao.length > 0) {
     new Chart(ctxSituacao.getContext('2d'), {
@@ -589,7 +569,6 @@ canvas {
     });
   }
   
-  // ========== GRÁFICO 2: Alunos por Status (Pizza) ==========
   const ctxStatus = document.getElementById('chartAlunosStatus');
   if (ctxStatus && alunosStatus && alunosStatus.length > 0) {
     new Chart(ctxStatus.getContext('2d'), {
@@ -627,7 +606,6 @@ canvas {
     });
   }
   
-  // ========== GRÁFICO 3: Evolução (Últimos 6 Meses - Linha) ==========
   const ctxMeses = document.getElementById('chartEstagiosMeses');
   if (ctxMeses && estagiosMeses && estagiosMeses.length > 0) {
     new Chart(ctxMeses.getContext('2d'), {
@@ -691,4 +669,5 @@ canvas {
 })();
 
 </script>
+
 {% endblock %}
