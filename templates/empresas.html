@@ -361,16 +361,19 @@ body.dark select option {
           <td>
             <div class="action-buttons">
               {% if usuario_nivel >= NIVEL_COORDENADOR %}
-              <a href="{{ url_for('empresa_editar', id=e.idEmpresa) }}" class="btn btn-outline-secondary">
-                <i class="bi bi-pencil"></i> Editar
-              </a>
+                <a href="{{ url_for('empresa_editar', id=e.idEmpresa) }}" 
+                   class="btn btn-outline-secondary btn-action-fixed">
+                  <i class="bi bi-pencil"></i> Editar
+                </a>
               {% endif %}
               {% if usuario_nivel >= NIVEL_ADMIN %}
-              <form method="post" action="{{ url_for('empresa_toggle', id=e.idEmpresa) }}" style="display:inline;">
-                <button type="submit"
-                        class="btn btn-sm {% if e.ativo in [0, '0', None] %}btn-outline-success{% else %}btn-outline-danger{% endif %}">
-                  <i class="bi {% if e.ativo in [0, '0', None] %}bi-check-lg{% else %}bi-dash-circle{% endif %}"></i>
-                  {% if e.ativo in [0, '0', None] %}Ativar{% else %}Desativar{% endif %}
+                <form method="post" action="{{ url_for('empresa_toggle', id=e.idEmpresa) }}" style="display:inline;">
+                  <button type="submit"
+                          class="btn {% if e.ativo in [0, '0', None] %}btn-outline-success{% else %}btn-outline-danger{% endif %}">
+                    <i class="bi {% if e.ativo in [0, '0', None] %}bi-check-lg{% else %}bi-dash-circle{% endif %}"></i>
+                    {% if e.ativo in [0, '0', None] %}Ativar{% else %}Desativar{% endif %}
+                  </button>
+                </form>
               {% endif %}
             </div>
           </td>

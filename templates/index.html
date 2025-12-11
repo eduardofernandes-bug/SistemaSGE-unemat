@@ -3,6 +3,30 @@
 {% block content %}
 
 <style>
+
+.page-header {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border) !important;
+    color: var(--text) !important;
+    box-shadow: var(--shadow-md) !important;
+    border-radius: 16px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
+}
+
+.page-header .section-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0;
+}
+
+.page-header .section-title i {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
 .page-header,
 .hero-section,
 .filter-section,
@@ -207,6 +231,16 @@ body.dark select option {
     color: white;
   }
 
+  .feature-icon.green {
+    background: linear-gradient(135deg, #5fdf6a 0%, #8eff0dcb 100%);
+    color: white;
+  }
+
+  .feature-icon.red {
+    background: linear-gradient(135deg, #d44444 0%, #fe0000ca 100%);
+    color: white;
+  }
+
   .feature-title {
     font-size: 1.5rem;
     font-weight: 700;
@@ -258,6 +292,53 @@ body.dark select option {
     .hero-title { font-size: 2rem; }
     .hero-subtitle { font-size: 1rem; }
   }
+
+/* ========== CARDS DE GRÁFICOS ========== */
+.section-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+}
+
+.section-title i {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.chart-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: var(--shadow-md);
+    height: 100%;
+    transition: all 0.3s ease;
+}
+
+.chart-card:hover {
+    box-shadow: var(--shadow-xl);
+    transform: translateY(-4px);
+}
+
+.chart-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.chart-title i {
+    font-size: 1.3rem;
+}
+
+canvas {
+    max-height: 300px;
+}
 </style>
 
 <div class="hero-section fade-in-up">
@@ -302,7 +383,7 @@ body.dark select option {
     <a href="{{ url_for('alunos') }}" style="text-decoration: none;">
       <div class="feature-card">
         <div class="feature-icon purple">
-          <i class="bi bi-people-fill"></i>
+          <i class="bi bi-person"></i>
         </div>
         <h3 class="feature-title">Gerenciar Alunos</h3>
         <p class="feature-description">
@@ -318,7 +399,7 @@ body.dark select option {
         <div class="feature-icon pink">
           <i class="bi bi-building"></i>
         </div>
-        <h3 class="feature-title">Empresas Parceiras</h3>
+        <h3 class="feature-title">Gerenciar Parceiros</h3>
         <p class="feature-description">
           Mantenha cadastro atualizado das empresas conveniadas, com informações de contato e localização.
         </p>
@@ -332,21 +413,282 @@ body.dark select option {
         <div class="feature-icon blue">
           <i class="bi bi-clipboard-check"></i>
         </div>
-        <h3 class="feature-title">Controle de Estágios</h3>
+        <h3 class="feature-title">Gerenciar Estágios</h3>
         <p class="feature-description">
           Acompanhe todos os estágios em andamento, datas, documentação e status de cada acordo firmado.
         </p>
       </div>
     </a>
   </div>
+
+  <div class="col-md-4">
+    <a href="{{ url_for('usuarios') }}" style="text-decoration: none;">
+      <div class="feature-card">
+        <div class="feature-icon green">
+          <i class="bi bi-people"></i>
+        </div>
+        <h3 class="feature-title">Gerenciar Usuários</h3>
+        <p class="feature-description">
+          Cadastre os usuários para acesso ao sistema SGE, selecionando o nivel desejado.
+        </p>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-4">
+    <a href="{{ url_for('documentos') }}" style="text-decoration: none;">
+      <div class="feature-card">
+        <div class="feature-icon red">
+          <i class="bi bi-files"></i>
+        </div>
+        <h3 class="feature-title">Gerenciar Documentação</h3>
+        <p class="feature-description">
+          Gere a documentação necessária para o envio quando solicitado.
+        </p>
+      </div>
+    </a>
+  </div>
 </div>
 
-<div class="mt-5 p-4 text-center fade-in-up content-box" style="border-radius: 16px;">
-  <i class="bi bi-filetype-py" style="font-size: 5rem; color: var(--info);"></i>
-  <i class="bi bi-filetype-html" style="font-size: 5rem; color: var(--info);"></i>
-  <i class="bi bi-bootstrap" style="font-size: 5rem; color: var(--info);"></i>
-  <h4 class="mt-3 mb-2" style="font-weight: 700;">Sistema Desenvolvido com Python, HTML e Bootstrap</h4>
-  <p style="margin: 0;">Otimize o gerenciamento de estágios com uma interface moderna e intuitiva.</p>
-  <p style="margin: 0;">Laboratório De Programação Orientada a Objetos - UNEMAT Rondonópolis</p>
+<!-- SEÇÃO DE GRÁFICOS -->
+    
+<div class="row mt-5">
+  <!-- Cabeçalho com fundo arredondado -->
+  <div class="col-12 mb-4">
+      <div class="page-header fade-in-up">
+          <h2 class="section-title">
+              <i class="bi bi-bar-chart-fill me-2"></i>
+              Análises e Estatísticas
+          </h2>
+      </div>
+  </div>
+
+
+  <!-- Gráfico: Estágios por Situação -->
+  <div class="col-lg-6 mb-4">
+      <div class="chart-card">
+          <h5 class="chart-title">
+              <i class="bi bi-pie-chart text-primary"></i>
+              Estágios por Situação
+          </h5>
+          <canvas id="chartEstagiosSituacao"></canvas>
+      </div>
+  </div>
+  
+  <!-- Gráfico: Alunos por Status -->
+  <div class="col-lg-6 mb-4">
+      <div class="chart-card">
+          <h5 class="chart-title">
+              <i class="bi bi-people text-success"></i>
+              Alunos por Status
+          </h5>
+          <canvas id="chartAlunosStatus"></canvas>
+      </div>
+  </div>
+  
+  <!-- Gráfico: Evolução (Últimos 6 Meses) -->
+  <div class="col-12 mb-4">
+      <div class="chart-card">
+          <h5 class="chart-title">
+              <i class="bi bi-graph-up-arrow text-info"></i>
+              Novos Estágios - Últimos 6 Meses
+          </h5>
+          <canvas id="chartEstagiosMeses"></canvas>
+      </div>
+  </div>
 </div>
+
+<div class="row g-2 fade-in-up">
+  <div class="mt-5 p-4 text-center fade-in-up content-box page-footer-spacing" style="border-radius: 16px; margin-bottom: 4rem;">
+    <i class="bi bi-filetype-py" style="font-size: 5rem; color: var(--info);"></i>
+    <i class="bi bi-filetype-html" style="font-size: 5rem; color: var(--info);"></i>
+    <i class="bi bi-bootstrap" style="font-size: 5rem; color: var(--info);"></i>
+    <h4 class="mt-3 mb-2" style="font-weight: 700;">Sistema Desenvolvido com Python, HTML e Bootstrap</h4>
+    <p style="margin: 0;">Otimize o gerenciamento de estágios com uma interface moderna e intuitiva.</p>
+    <p style="margin: 0;">Laboratório De Programação Orientada a Objetos - UNEMAT Rondonópolis</p>
+  </div>
+</div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script>
+(function() {
+  'use strict';
+  
+  // ========== CONFIGURAÇÃO DOS GRÁFICOS ==========
+  
+  // Dados do backend
+  // eslint-disable-next-line
+  // @ts-ignore
+  const estagiosSituacao = {{ estagios_situacao | tojson | safe }};
+  // @ts-ignore
+  const alunosStatus = {{ alunos_status | tojson | safe }};
+  // @ts-ignore
+  const estagiosMeses = {{ estagios_meses | tojson | safe }};
+  
+  // Cores para os gráficos
+  const coresPrimarias = [
+    '#3b82f6', // Azul
+    '#10b981', // Verde
+    '#f59e0b', // Amarelo
+    '#ef4444', // Vermelho
+    '#8b5cf6', // Roxo
+    '#ec4899', // Rosa
+    '#06b6d4', // Cyan
+    '#f97316'  // Laranja
+  ];
+  
+  // Função para obter cor do texto baseada no tema
+  function getTextColor() {
+    return getComputedStyle(document.body).getPropertyValue('--text').trim() || '#1f2937';
+  }
+  
+  function getTextLightColor() {
+    return getComputedStyle(document.body).getPropertyValue('--text-light').trim() || '#6b7280';
+  }
+  
+  // ========== GRÁFICO 1: Estágios por Situação (Pizza) ==========
+  const ctxSituacao = document.getElementById('chartEstagiosSituacao');
+  if (ctxSituacao && estagiosSituacao && estagiosSituacao.length > 0) {
+    new Chart(ctxSituacao.getContext('2d'), {
+      type: 'doughnut',
+      data: {
+        labels: estagiosSituacao.map(e => e.situacao || 'Não definido'),
+        datasets: [{
+          data: estagiosSituacao.map(e => e.total),
+          backgroundColor: coresPrimarias,
+          borderWidth: 2,
+          borderColor: '#ffffff'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              padding: 15,
+              font: { size: 12, weight: '600' },
+              color: getTextColor()
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return context.label + ': ' + context.parsed + ' estágios';
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+  
+  // ========== GRÁFICO 2: Alunos por Status (Pizza) ==========
+  const ctxStatus = document.getElementById('chartAlunosStatus');
+  if (ctxStatus && alunosStatus && alunosStatus.length > 0) {
+    new Chart(ctxStatus.getContext('2d'), {
+      type: 'doughnut',
+      data: {
+        labels: alunosStatus.map(a => a.statusAluno || 'Não definido'),
+        datasets: [{
+          data: alunosStatus.map(a => a.total),
+          backgroundColor: coresPrimarias,
+          borderWidth: 2,
+          borderColor: '#ffffff'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              padding: 15,
+              font: { size: 12, weight: '600' },
+              color: getTextColor()
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return context.label + ': ' + context.parsed + ' alunos';
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+  
+  // ========== GRÁFICO 3: Evolução (Últimos 6 Meses - Linha) ==========
+  const ctxMeses = document.getElementById('chartEstagiosMeses');
+  if (ctxMeses && estagiosMeses && estagiosMeses.length > 0) {
+    new Chart(ctxMeses.getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: estagiosMeses.map(m => m.mes),
+        datasets: [{
+          label: 'Novos Estágios',
+          data: estagiosMeses.map(m => m.total),
+          borderColor: '#3b82f6',
+          backgroundColor: 'rgba(59, 130, 246, 0.1)',
+          borderWidth: 3,
+          fill: true,
+          tension: 0.4,
+          pointRadius: 5,
+          pointBackgroundColor: '#3b82f6',
+          pointBorderColor: '#ffffff',
+          pointBorderWidth: 2,
+          pointHoverRadius: 7
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return 'Novos: ' + context.parsed.y + ' estágios';
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              stepSize: 1,
+              color: getTextLightColor()
+            },
+            grid: {
+              color: 'rgba(0,0,0,0.05)'
+            }
+          },
+          x: {
+            ticks: {
+              color: getTextLightColor()
+            },
+            grid: {
+              display: false
+            }
+          }
+        }
+      }
+    });
+  }
+  
+})();
+
+</script>
 {% endblock %}

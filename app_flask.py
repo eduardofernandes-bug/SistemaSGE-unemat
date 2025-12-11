@@ -3,13 +3,15 @@ import secrets
 from datetime import datetime
 from functools import wraps
 from dotenv import load_dotenv
-from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, session
+from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, send_file, session
 from aluno import Aluno
 from empresa import Empresa
 from estagio import Estagio
 from localidades import Localidades
 from estatisticas import Estatisticas
-from usuario import Usuario, NIVEL_ADMIN, NIVEL_COORDENADOR, NIVEL_VISUALIZADOR 
+from usuario import Usuario, NIVEL_ADMIN, NIVEL_COORDENADOR, NIVEL_VISUALIZADOR
+from documento import GeradorDocumentos
+
 
 load_dotenv()
 
@@ -292,13 +294,23 @@ def usuario_toggle(id):
         flash("Falha ao atualizar status.", "danger")
     return redirect(url_for("usuarios"))
 
-@app.route("/")
+@app.route('/')
 @login_required
 def index():
     """Página inicial com estatísticas do sistema"""
     try:
         stats = Estatisticas.obter_todas_estatisticas()
-        return render_template("index.html", stats=stats)
+        
+        # Dados para gráficos
+        estagios_situacao = Estatisticas.estagios_por_situacao()
+        alunos_status = Estatisticas.alunos_por_status()
+        estagios_meses = Estatisticas.estagios_ultimos_6_meses()
+        
+        return render_template('index.html', 
+                             stats=stats,
+                             estagios_situacao=estagios_situacao,
+                             alunos_status=alunos_status,
+                             estagios_meses=estagios_meses)
     except Exception as e:
         app.logger.error(f"Erro ao carregar estatísticas: {e}")
         stats = {
@@ -308,7 +320,12 @@ def index():
             'estagios_concluidos_mes': 0
         }
         flash("Erro ao carregar estatísticas do sistema.", "warning")
-        return render_template("index.html", stats=stats)
+        return render_template('index.html', 
+                             stats=stats,
+                             estagios_situacao=[],
+                             alunos_status=[],
+                             estagios_meses=[])
+
 
 @app.route("/alunos")
 @login_required
@@ -332,6 +349,8 @@ def alunos():
         app.logger.error(f"Erro em /alunos: {e}")
         return redirect(url_for("index"))
 
+# Em app_flask.py - SUBSTITUA a rota /aluno/novo
+
 @app.route("/aluno/novo", methods=["GET", "POST"])
 @login_required
 def aluno_novo():
@@ -349,23 +368,31 @@ def aluno_novo():
             status = request.form.get("status", "").strip()
             idCidade = request.form.get("cidade_id")
             idEstado = request.form.get("estado_id")
-
+            
             if not nome or not matricula or not cpf:
                 flash("Nome, matrícula e CPF são obrigatórios.", "warning")
                 return render_template("aluno_form.html", estados=estados, aluno=None)
-
-            aluno = Aluno(nome, matricula, cpf, nome_inst, telefone, endereco, bairro, 
+            
+            aluno = Aluno(nome, matricula, cpf, nome_inst, telefone, endereco, bairro,
                          periodo, status, idCidade, idEstado)
-            if aluno.salvar():
-                flash("Aluno cadastrado com sucesso!", "success")
+            
+            # ← MUDANÇA: agora recebe tupla
+            sucesso, mensagem = aluno.salvar()
+            
+            if sucesso:
+                flash(mensagem, "success")  # ← Usa mensagem do retorno
                 return redirect(url_for("alunos"))
             else:
-                flash("Erro ao cadastrar aluno. Verifique os dados.", "danger")
+                flash(mensagem, "danger")  # ← Usa mensagem de erro
+                
         except Exception as e:
-            flash("Erro ao processar cadastro.", "danger")
+            flash(f"Erro ao processar cadastro: {str(e)}", "danger")
             app.logger.error(f"Erro em aluno_novo: {e}")
     
     return render_template("aluno_form.html", estados=estados, aluno=None)
+
+
+# Em app_flask.py - SUBSTITUA a rota /aluno/<id>/editar
 
 @app.route("/aluno/<int:id>/editar", methods=["GET", "POST"])
 @login_required
@@ -384,23 +411,30 @@ def aluno_editar(id):
             status = request.form.get("status", "").strip()
             idCidade = request.form.get("cidade_id")
             idEstado = request.form.get("estado_id")
-
-            aluno = Aluno(nome, matricula, cpf, nome_inst, telefone, endereco, bairro, 
+            
+            aluno = Aluno(nome, matricula, cpf, nome_inst, telefone, endereco, bairro,
                          periodo, status, idCidade, idEstado, idAluno=id)
-            if aluno.editar():
-                flash("Aluno atualizado com sucesso!", "success")
+            
+            # ← MUDANÇA: agora recebe tupla
+            sucesso, mensagem = aluno.editar()
+            
+            if sucesso:
+                flash(mensagem, "success")
                 return redirect(url_for("alunos"))
             else:
-                flash("Erro ao atualizar aluno.", "danger")
+                flash(mensagem, "danger")
+                
         except Exception as e:
-            flash("Erro ao processar atualização.", "danger")
+            flash(f"Erro ao processar atualização: {str(e)}", "danger")
             app.logger.error(f"Erro em aluno_editar: {e}")
-
+    
     aluno = Aluno.buscar_por_id(id)
     if not aluno:
         flash("Aluno não encontrado.", "danger")
         return redirect(url_for("alunos"))
+    
     return render_template("aluno_form.html", estados=estados, aluno=aluno)
+
 
 @app.route("/aluno/<int:id>/desativar", methods=["POST"])
 @login_required
@@ -455,6 +489,8 @@ def empresas():
         app.logger.error(f"Erro em /empresas: {e}")
         return redirect(url_for("index"))
 
+# Em app_flask.py - SUBSTITUA a rota /empresa/novo
+
 @app.route("/empresa/novo", methods=["GET", "POST"])
 @login_required
 def empresa_nova():
@@ -469,22 +505,30 @@ def empresa_nova():
             bairro = request.form.get("bairro", "").strip()
             idCidade = request.form.get("cidade_id")
             idEstado = request.form.get("estado_id")
-
+            
             if not razao:
                 flash("Razão Social é obrigatória.", "warning")
                 return render_template("empresa_form.html", estados=estados, empresa=None)
-
+            
             emp = Empresa(razao, fantasia, cnpj, cep, endereco, bairro, idCidade, idEstado)
-            if emp.salvar():
-                flash("Empresa cadastrada com sucesso!", "success")
+            
+            # ← MUDANÇA: agora recebe tupla
+            sucesso, mensagem = emp.salvar()
+            
+            if sucesso:
+                flash(mensagem, "success")
                 return redirect(url_for("empresas"))
             else:
-                flash("Erro ao cadastrar empresa.", "danger")
+                flash(mensagem, "danger")
+                
         except Exception as e:
-            flash("Erro ao processar cadastro.", "danger")
+            flash(f"Erro ao processar cadastro: {str(e)}", "danger")
             app.logger.error(f"Erro em empresa_nova: {e}")
     
     return render_template("empresa_form.html", estados=estados, empresa=None)
+
+
+# Em app_flask.py - SUBSTITUA a rota /empresa/<id>/editar
 
 @app.route("/empresa/<int:id>/editar", methods=["GET", "POST"])
 @login_required
@@ -500,22 +544,29 @@ def empresa_editar(id):
             bairro = request.form.get("bairro", "").strip()
             idCidade = request.form.get("cidade_id")
             idEstado = request.form.get("estado_id")
-
+            
             emp = Empresa(razao, fantasia, cnpj, cep, endereco, bairro, idCidade, idEstado, idEmpresa=id)
-            if emp.editar():
-                flash("Empresa atualizada com sucesso!", "success")
+            
+            # ← MUDANÇA: agora recebe tupla
+            sucesso, mensagem = emp.editar()
+            
+            if sucesso:
+                flash(mensagem, "success")
                 return redirect(url_for("empresas"))
             else:
-                flash("Erro ao atualizar empresa.", "danger")
+                flash(mensagem, "danger")
+                
         except Exception as e:
-            flash("Erro ao processar atualização.", "danger")
+            flash(f"Erro ao processar atualização: {str(e)}", "danger")
             app.logger.error(f"Erro em empresa_editar: {e}")
-
+    
     empresa = Empresa.buscar_por_id(id)
     if not empresa:
         flash("Empresa não encontrada.", "danger")
         return redirect(url_for("empresas"))
+    
     return render_template("empresa_form.html", estados=estados, empresa=empresa)
+
 
 @app.route("/empresa/<int:id>/desativar", methods=["POST"])
 @login_required
@@ -569,12 +620,15 @@ def estagios():
         app.logger.error(f"Erro em /estagios: {e}")
         return redirect(url_for("index"))
 
+# Em app_flask.py - SUBSTITUA a rota /estagio/novo
+
 @app.route("/estagio/novo", methods=["GET", "POST"])
 @login_required
 def estagio_novo():
     estados = Localidades.listar_estados()
     alunos = Aluno.listar()
     empresas = Empresa.listar()
+    
     if request.method == "POST":
         try:
             idAluno = request.form.get("aluno_id")
@@ -588,25 +642,33 @@ def estagio_novo():
             setor = request.form.get("setor", "").strip()
             documentacao = request.form.get("documentacao", "").strip()
             status = request.form.get("status")
-
+            
             if not idAluno or not idEmpresa:
                 flash("Aluno e Empresa são obrigatórios.", "warning")
-                return render_template("estagio_form.html", estados=estados, alunos=alunos, 
+                return render_template("estagio_form.html", estados=estados, alunos=alunos,
                                       empresas=empresas, estagio=None)
-
-            est = Estagio(idAluno, idEmpresa, data_inicio, data_fim, carga, situacao, 
+            
+            est = Estagio(idAluno, idEmpresa, data_inicio, data_fim, carga, situacao,
                          supervisor, orientador, setor, documentacao, status)
-            if est.salvar():
-                flash("Estágio cadastrado com sucesso!", "success")
+            
+            # ← MUDANÇA: agora recebe tupla
+            sucesso, mensagem = est.salvar()
+            
+            if sucesso:
+                flash(mensagem, "success")
                 return redirect(url_for("estagios"))
             else:
-                flash("Erro ao cadastrar estágio.", "danger")
+                flash(mensagem, "danger")
+                
         except Exception as e:
-            flash("Erro ao processar cadastro.", "danger")
+            flash(f"Erro ao processar cadastro: {str(e)}", "danger")
             app.logger.error(f"Erro em estagio_novo: {e}")
     
-    return render_template("estagio_form.html", estados=estados, alunos=alunos, 
+    return render_template("estagio_form.html", estados=estados, alunos=alunos,
                           empresas=empresas, estagio=None)
+
+
+# Em app_flask.py - SUBSTITUA a rota /estagio/<id>/editar
 
 @app.route("/estagio/<int:id>/editar", methods=["GET", "POST"])
 @login_required
@@ -628,25 +690,31 @@ def estagio_editar(id):
             setor = request.form.get("setor", "").strip()
             documentacao = request.form.get("documentacao", "").strip()
             status = request.form.get("status")
-
-            est = Estagio(idAluno, idEmpresa, data_inicio, data_fim, carga, situacao, 
+            
+            est = Estagio(idAluno, idEmpresa, data_inicio, data_fim, carga, situacao,
                          supervisor, orientador, setor, documentacao, status, idEstagio=id)
-            if est.editar():
-                flash("Estágio atualizado com sucesso!", "success")
+            
+            # ← MUDANÇA: agora recebe tupla
+            sucesso, mensagem = est.editar()
+            
+            if sucesso:
+                flash(mensagem, "success")
                 return redirect(url_for("estagios"))
             else:
-                flash("Erro ao atualizar estágio.", "danger")
+                flash(mensagem, "danger")
+                
         except Exception as e:
-            flash("Erro ao processar atualização.", "danger")
+            flash(f"Erro ao processar atualização: {str(e)}", "danger")
             app.logger.error(f"Erro em estagio_editar: {e}")
-
+    
     estagio = Estagio.buscar_por_id(id)
     if not estagio:
         flash("Estágio não encontrado.", "danger")
         return redirect(url_for("estagios"))
     
-    return render_template("estagio_form.html", estados=estados, alunos=alunos, 
+    return render_template("estagio_form.html", estados=estados, alunos=alunos,
                           empresas=empresas, estagio=estagio)
+
 
 @app.route("/estagio/<int:id>/desativar", methods=["POST"])
 @login_required
@@ -770,6 +838,149 @@ def meus_estagios():
             return redirect(url_for("index"))
 
     return redirect(url_for('estagios'))
+
+@app.route("/documentos")
+@login_required
+def documentos():
+    """Lista documentos gerados"""
+    try:
+        gerador = GeradorDocumentos()
+        documentos_gerados = gerador.listar_documentos_gerados()
+        templates_ok = gerador.verificar_templates()
+        
+        return render_template("documentos.html", 
+                             documentos=documentos_gerados,
+                             templates=templates_ok)
+    except Exception as e:
+        flash("Erro ao carregar documentos.", "danger")
+        app.logger.error(f"Erro em /documentos: {e}")
+        return redirect(url_for("index"))
+
+@app.route("/documento/plano/<int:estagio_id>", methods=["GET", "POST"])
+@login_required
+def gerar_plano_atividades(estagio_id):
+    """Gera Plano de Atividades para um estágio"""
+    try:
+        estagio = Estagio.buscar_por_id(estagio_id)
+        if not estagio:
+            flash("Estágio não encontrado.", "danger")
+            return redirect(url_for("estagios"))
+        
+        aluno_data = Aluno.buscar_por_id(estagio['idAlunoA'])
+        empresa_data = Empresa.buscar_por_id(estagio['idEmpresaE'])
+        
+        if request.method == "POST":
+            dados_estagiario = {
+                'nome': aluno_data['nome'],
+                'telefone': aluno_data.get('telefone', ''),
+                'email': request.form.get('email_aluno', '')
+            }
+            
+            dados_empresa = {
+                'nome': empresa_data['razaoSocial'],
+                'telefone': empresa_data.get('telefone', ''),
+                'email': request.form.get('email_empresa', ''),
+                'supervisor': estagio.get('supervisor', '')
+            }
+            
+            cronograma = []
+            periodos = request.form.getlist('periodo[]')
+            atividades = request.form.getlist('atividade[]')
+            
+            for periodo, atividade in zip(periodos, atividades):
+                if periodo and atividade:
+                    cronograma.append({
+                        'periodo': periodo,
+                        'atividades': atividade
+                    })
+            
+            cidade = request.form.get('cidade', aluno_data.get('cidade', ''))
+            
+            gerador = GeradorDocumentos()
+            caminho = gerador.gerar_plano_atividades(
+                dados_estagiario, dados_empresa, cronograma, cidade
+            )
+            
+            flash("Plano de Atividades gerado com sucesso!", "success")
+            return send_file(caminho, as_attachment=True)
+        
+        return render_template("gerar_plano.html", 
+                             estagio=estagio,
+                             aluno=aluno_data,
+                             empresa=empresa_data)
+                             
+    except Exception as e:
+        flash(f"Erro ao gerar documento: {str(e)}", "danger")
+        app.logger.error(f"Erro em gerar_plano_atividades: {e}")
+        return redirect(url_for("estagios"))
+
+@app.route("/documento/ficha/<int:estagio_id>", methods=["GET", "POST"])
+@login_required
+def gerar_ficha_atividades(estagio_id):
+    """Gera Ficha de Atividades para um estágio"""
+    try:
+        estagio = Estagio.buscar_por_id(estagio_id)
+        if not estagio:
+            flash("Estágio não encontrado.", "danger")
+            return redirect(url_for("estagios"))
+        
+        aluno_data = Aluno.buscar_por_id(estagio['idAlunoA'])
+        empresa_data = Empresa.buscar_por_id(estagio['idEmpresaE'])
+        
+        if request.method == "POST":
+            dados_estagiario = {
+                'nome': aluno_data['nome']
+            }
+            
+            dados_empresa = {
+                'nome': empresa_data['razaoSocial'],
+                'supervisor': estagio.get('supervisor', '')
+            }
+            
+            mes = request.form.get('mes')
+            ano = int(request.form.get('ano'))
+            
+            atividades_diarias = []
+            dias = request.form.getlist('dia[]')
+            inicios = request.form.getlist('inicio[]')
+            terminos = request.form.getlist('termino[]')
+            descricoes = request.form.getlist('descricao[]')
+            
+            dia_contador = 1
+            for dia, inicio, termino, descricao in zip(dias, inicios, terminos, descricoes):
+                if inicio or termino or descricao:
+                    dia_real = int(dia) if dia and dia.strip() else dia_contador
+        
+            atividades_diarias.append({
+            'dia': dia_real,
+            'inicio': inicio,
+            'termino': termino,
+            'descricao': descricao
+            })
+        
+            dia_contador += 1
+
+            gerador = GeradorDocumentos()
+            caminho = gerador.gerar_ficha_atividades(
+                dados_estagiario, dados_empresa, mes, ano, atividades_diarias
+            )
+            
+            flash("Ficha de Atividades gerada com sucesso!", "success")
+            return send_file(caminho, as_attachment=True)
+        
+        meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
+        
+        return render_template("gerar_ficha.html",
+                             estagio=estagio,
+                             aluno=aluno_data,
+                             empresa=empresa_data,
+                             meses=meses)
+                             
+    except Exception as e:
+        flash(f"Erro ao gerar documento: {str(e)}", "danger")
+        app.logger.error(f"Erro em gerar_ficha_atividades: {e}")
+        return redirect(url_for("estagios"))
 
 @app.template_global()
 def calcular_progresso(data_inicio, data_fim):

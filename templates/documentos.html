@@ -1,0 +1,656 @@
+{% extends "base.html" %}
+{% block title %}SGE - Documentos{% endblock %}
+{% block content %}
+
+<style>
+    .page-header, .hero-section, .filter-section, .table-card, .form-container, .stat-card, .feature-card, .content-box {
+        background: var(--bg-card) !important;
+        border: 1px solid var(--border) !important;
+        color: var(--text) !important;
+        box-shadow: var(--shadow-md) !important;
+    }
+    .page-title, .card-title {
+        color: var(--text) !important;
+    }
+    .card-text, .text-muted {
+        color: var(--text-light) !important;
+    }
+
+    .page-header {
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .page-title {
+        font-size: 2rem;
+        font-weight: 800;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .page-title i {
+        font-size: 2.5rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .template-card {
+        border-radius: 16px;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .template-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .info-box {
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .table-card {
+        border-radius: 16px;
+        overflow: hidden;
+    }
+
+    .table-modern {
+        margin: 0;
+        width: 100%;
+    }
+
+    .table-modern thead {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .table-modern thead th {
+        padding: 1.25rem 1rem;
+        font-weight: 600;
+        border: none;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+        color: white !important;
+        white-space: nowrap;
+    }
+
+    .table-modern tbody tr {
+        border-bottom: 1px solid var(--border);
+        transition: all 0.2s ease;
+    }
+
+    .table-modern tbody tr:hover {
+        background: rgba(99, 102, 241, 0.05);
+    }
+
+    .table-modern tbody td {
+        padding: 1.25rem 1rem;
+        vertical-align: middle;
+        color: var(--text);
+    }
+
+    .badge-template {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.75rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: var(--text-light);
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    .empty-state h4 {
+        color: var(--text);
+    }
+
+    @media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .table-modern {
+            font-size: 0.85rem;
+        }
+    }
+
+    /* ========== CARDS DE TEMPLATE ========== */
+    .template-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 2rem;
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow-md);
+    }
+
+    .template-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-xl);
+        border-color: var(--primary);
+    }
+
+    .template-card h3 {
+        color: var(--text);
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .template-card .template-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    /* Ícone Word - Azul */
+    .template-card.template-word .template-icon {
+        background: linear-gradient(135deg, #2b579a 0%, #185abd 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    /* Ícone Excel - Verde */
+    .template-card.template-excel .template-icon {
+        background: linear-gradient(135deg, #1d6f42 0%, #21a366 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    /* Badge "Template disponível" */
+    .template-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(16, 185, 129, 0.12);
+        color: #10b981;
+        padding: 0.5rem 1rem;
+        border-radius: 999px;
+        font-weight: 600;
+        font-size: 0.875rem;
+    }
+
+    body.dark .template-badge {
+        background: rgba(16, 185, 129, 0.2);
+        color: #34d399;
+    }
+
+    /* Card de instruções */
+    .instructions-card {
+        background: rgba(59, 130, 246, 0.08);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        border-radius: 12px;
+        padding: 1.5rem;
+    }
+
+    body.dark .instructions-card {
+        background: rgba(59, 130, 246, 0.12);
+        border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    .instructions-card h5 {
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .instructions-card h5 i {
+        color: #3b82f6;
+        font-size: 1.5rem;
+    }
+
+    .instructions-card ol {
+        color: var(--text);
+        padding-left: 1.5rem;
+    }
+
+    .instructions-card ol li {
+        margin-bottom: 0.5rem;
+        line-height: 1.6;
+    }
+
+    .instructions-card a {
+        color: #3b82f6;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .instructions-card a:hover {
+        text-decoration: underline;
+    }
+
+    /* Seção de documentos gerados */
+    .documents-section {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .documents-section h4 {
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .documents-section h4 i {
+        color: #3b82f6;
+    }
+
+    /* Modo escuro específico */
+    body.dark .template-card {
+        background: var(--bg-card);
+        border-color: var(--border);
+    }
+
+    body.dark .template-card:hover {
+        border-color: var(--primary);
+    }
+
+
+    /* ========== CARD DE INSTRUÇÕES ========== */
+    .how-to-card {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(147, 197, 253, 0.05) 100%);
+        border: 2px solid rgba(59, 130, 246, 0.2);
+        border-radius: 16px;
+        padding: 0;
+        overflow: hidden;
+        margin-bottom: 2rem;
+        transition: all 0.3s ease;
+    }   
+
+.how-to-card:hover {
+    border-color: rgba(59, 130, 246, 0.4);
+    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.15);
+}
+
+/* Header do Card */
+.how-to-header {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.how-to-icon {
+    background: rgba(255, 255, 255, 0.2);
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.how-to-title {
+    color: white;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+/* Lista de Passos */
+.how-to-steps {
+    padding: 2rem;
+}
+
+.step-item {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.step-item:last-child {
+    margin-bottom: 0;
+}
+
+.step-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 19px;
+    top: 50px;
+    width: 2px;
+    height: calc(100% - 10px);
+    background: linear-gradient(180deg, rgba(59, 130, 246, 0.3) 0%, transparent 100%);
+}
+
+/* Número do Passo */
+.step-number {
+    min-width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    flex-shrink: 0;
+}
+
+/* Conteúdo do Passo */
+.step-content {
+    flex: 1;
+    padding-top: 0.5rem;
+}
+
+.step-content p {
+    color: var(--text);
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* Link nos Passos */
+.step-link {
+    color: #3b82f6;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: all 0.2s ease;
+}
+
+.step-link:hover {
+    color: #2563eb;
+    gap: 0.5rem;
+}
+
+/* Badge Inline */
+.badge-inline {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+/* Opções de Documentos */
+.doc-options {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.doc-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.doc-badge i {
+    font-size: 1.1rem;
+}
+
+.doc-word {
+    background: rgba(43, 87, 154, 0.1);
+    color: #2b579a;
+    border: 2px solid rgba(43, 87, 154, 0.2);
+}
+
+.doc-word:hover {
+    background: rgba(43, 87, 154, 0.2);
+    border-color: #2b579a;
+    transform: translateY(-2px);
+}
+
+.doc-excel {
+    background: rgba(33, 163, 102, 0.1);
+    color: #21a366;
+    border: 2px solid rgba(33, 163, 102, 0.2);
+}
+
+.doc-excel:hover {
+    background: rgba(33, 163, 102, 0.2);
+    border-color: #21a366;
+    transform: translateY(-2px);
+}
+
+/* Modo Escuro */
+body.dark .how-to-card {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.12) 0%, rgba(147, 197, 253, 0.08) 100%);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+body.dark .how-to-card:hover {
+    border-color: rgba(59, 130, 246, 0.5);
+}
+
+body.dark .step-content p {
+    color: var(--text);
+}
+
+body.dark .doc-word {
+    background: rgba(59, 130, 246, 0.15);
+    color: #60a5fa;
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+body.dark .doc-excel {
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+    border-color: rgba(34, 197, 94, 0.3);
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .how-to-header {
+        padding: 1rem 1.5rem;
+    }
+    
+    .how-to-steps {
+        padding: 1.5rem;
+    }
+    
+    .step-item {
+        gap: 1rem;
+    }
+    
+    .step-number {
+        min-width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+    
+    .doc-options {
+        flex-direction: column;
+    }
+}
+</style>
+
+<div class="container-fluid mt-4">
+    <!-- CABEÇALHO IGUAL AO DE ESTÁGIOS -->
+    <div class="page-header fade-in-up">
+        <h1 class="page-title">
+            <i class="bi bi-file-earmark-text"></i>
+            Gerador de Documentos
+        </h1>
+    </div>
+
+    <!-- Cards de status dos templates -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="template-card template-word">
+                <i class="bi bi-file-earmark-word template-icon"></i>
+                <h3>Anexo VI - Plano de Atividades</h3>
+                <span class="template-badge">
+                    <i class="bi bi-check-circle-fill"></i>
+                    Template disponível
+                </span>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="template-card template-excel">
+                <i class="bi bi-file-earmark-excel template-icon"></i>
+                <h3>Anexo VII - Ficha de Atividades</h3>
+                <span class="template-badge">
+                    <i class="bi bi-check-circle-fill"></i>
+                    Template disponível
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Como gerar documentos -->
+    <div class="how-to-card">
+        <div class="how-to-header">
+            <div class="how-to-icon">
+                <i class="bi bi-info-circle-fill"></i>
+            </div>
+            <h4 class="how-to-title">Como gerar documentos ?</h4>
+        </div>
+        
+        <div class="how-to-steps">
+            <div class="step-item">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <p>Vá para a página de <a href="{{ url_for('estagios') }}" class="step-link">Estágios <i class="bi bi-arrow-right"></i></a></p>
+                </div>
+            </div>
+            
+            <div class="step-item">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <p>Clique no botão <span class="badge-inline">Gerar Documentos</span> ao lado do estágio desejado</p>
+                </div>
+            </div>
+            
+            <div class="step-item">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <p>Escolha entre:</p>
+                    <div class="doc-options">
+                        <span class="doc-badge doc-word">
+                            <i class="bi bi-file-earmark-word"></i> Plano de Atividades
+                        </span>
+                        <span class="doc-badge doc-excel">
+                            <i class="bi bi-file-earmark-excel"></i> Ficha de Atividades
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step-item">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <p>Preencha os dados e <strong>baixe o documento gerado</strong> <i class="bi bi-download text-success fs-4"></i></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <!-- Documentos gerados -->
+    <div class="card table-card">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+                <i class="bi bi-folder me-2"></i>
+                Documentos Gerados ({{ documentos|length }})
+            </h5>
+        </div>
+        <div class="card-body">
+            {% if documentos %}
+                <div class="table-responsive">
+                    <table class="table-modern">
+                        <thead>
+                            <tr style="text-align: center;">
+                                <th><i class="bi bi-file-text me-1"></i>Nome do Arquivo</th>
+                                <th><i class="bi bi-hdd me-1"></i>Tamanho</th>
+                                <th><i class="bi bi-calendar me-1"></i>Data de Criação</th>
+                                <th><i class="bi bi-gear me-1"></i>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for doc in documentos %}
+                            <tr style="text-align: center;">
+                                <td>
+                                    {% if doc.nome.endswith('.docx') %}
+                                        <i class="bi bi-file-word text-primary me-2"></i>
+                                    {% elif doc.nome.endswith('.xlsx') %}
+                                        <i class="bi bi-file-excel text-success me-2"></i>
+                                    {% else %}
+                                        <i class="bi bi-file-earmark me-2"></i>
+                                    {% endif %}
+                                    {{ doc.nome }}
+                                </td>
+                                <td>
+                                    {% if doc.tamanho < 1024 %}
+                                        {{ doc.tamanho }} bytes
+                                    {% elif doc.tamanho < 1048576 %}
+                                        {{ "%.2f"|format(doc.tamanho / 1024) }} KB
+                                    {% else %}
+                                        {{ "%.2f"|format(doc.tamanho / 1048576) }} MB
+                                    {% endif %}
+                                </td>
+                                <td>{{ doc.data_criacao.strftime('%d/%m/%Y %H:%M') }}</td>
+                                <td>
+                                    <a href="{{ url_for('static', filename='../' + doc.caminho) }}" 
+                                       class="btn btn-sm btn-outline-primary" 
+                                       download="{{ doc.nome }}">
+                                        <i class="bi bi-download me-1"></i>Baixar
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <i class="bi bi-inbox"></i>
+                    <h4>Nenhum documento gerado ainda.</h4>
+                    <p>Comece gerando documentos a partir dos estágios cadastrados.</p>
+                    <a href="{{ url_for('estagios') }}" class="btn btn-primary mt-1">
+                        <i class="bi bi-clipboard-check me-1"></i>Ir para Estágios
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

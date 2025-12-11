@@ -12,17 +12,13 @@ class Estatisticas:
         try:
             con = conectar()
             cursor = con.cursor()
-            cursor.execute("""
-                SELECT COUNT(*) 
-                FROM aluno 
-                WHERE ativo IS NULL OR ativo = 1
-            """)
+            cursor.execute("SELECT COUNT(*) FROM aluno WHERE ativo IS NULL OR ativo = 1")
             total = cursor.fetchone()[0]
             cursor.close()
             con.close()
             return total
         except Exception as e:
-            logger.error(f"⚠️ Erro ao buscar total de alunos: {e}")
+            logger.error(f"Erro ao buscar total de alunos: {e}")
             return 0
     
     @staticmethod
@@ -30,17 +26,13 @@ class Estatisticas:
         try:
             con = conectar()
             cursor = con.cursor()
-            cursor.execute("""
-                SELECT COUNT(*) 
-                FROM empresa 
-                WHERE ativo IS NULL OR ativo = 1
-            """)
+            cursor.execute("SELECT COUNT(*) FROM empresa WHERE ativo IS NULL OR ativo = 1")
             total = cursor.fetchone()[0]
             cursor.close()
             con.close()
             return total
         except Exception as e:
-            logger.error(f"⚠️ Erro ao buscar total de empresas: {e}")
+            logger.error(f"Erro ao buscar total de empresas: {e}")
             return 0
     
     @staticmethod
@@ -48,18 +40,13 @@ class Estatisticas:
         try:
             con = conectar()
             cursor = con.cursor()
-            cursor.execute("""
-                SELECT COUNT(*) 
-                FROM estagio 
-                WHERE (ativo IS NULL OR ativo = 1) 
-                AND situacao = 'Ativo'
-            """)
+            cursor.execute("SELECT COUNT(*) FROM estagio WHERE (ativo IS NULL OR ativo = 1) AND situacao = 'Ativo'")
             total = cursor.fetchone()[0]
             cursor.close()
             con.close()
             return total
         except Exception as e:
-            logger.error(f"⚠️ Erro ao buscar estágios ativos: {e}")
+            logger.error(f"Erro ao buscar estágios ativos: {e}")
             return 0
     
     @staticmethod
@@ -67,21 +54,19 @@ class Estatisticas:
         try:
             con = conectar()
             cursor = con.cursor()
-            
             hoje = datetime.now()
             primeiro_dia = hoje.replace(day=1)
+            
             if hoje.month == 12:
                 proximo_mes = hoje.replace(year=hoje.year + 1, month=1, day=1)
             else:
                 proximo_mes = hoje.replace(month=hoje.month + 1, day=1)
             
             cursor.execute("""
-                SELECT COUNT(*) 
-                FROM estagio 
+                SELECT COUNT(*) FROM estagio 
                 WHERE (ativo IS NULL OR ativo = 1) 
-                AND situacao = 'Concluido'
-                AND dataFim >= %s 
-                AND dataFim < %s
+                AND situacao = 'Concluído'
+                AND dataFim >= %s AND dataFim < %s
             """, (primeiro_dia.date(), proximo_mes.date()))
             
             total = cursor.fetchone()[0]
@@ -89,7 +74,7 @@ class Estatisticas:
             con.close()
             return total
         except Exception as e:
-            logger.error(f"⚠️ Erro ao buscar estágios concluídos no mês: {e}")
+            logger.error(f"Erro ao buscar estágios concluídos no mês: {e}")
             return 0
     
     @staticmethod
@@ -101,50 +86,90 @@ class Estatisticas:
             'estagios_concluidos_mes': Estatisticas.estagios_concluidos_mes()
         }
     
+    # ========== NOVOS MÉTODOS PARA GRÁFICOS ==========
+    
     @staticmethod
-    def estatisticas_por_periodo(dias=30):
+    def estagios_por_situacao():
+        """Retorna quantidade de estágios por situação"""
+        try:
+            con = conectar()
+            cursor = con.cursor(dictionary=True)
+            cursor.execute("""
+                SELECT situacao, COUNT(*) as total 
+                FROM estagio 
+                WHERE (ativo IS NULL OR ativo = 1)
+                GROUP BY situacao
+            """)
+            resultado = cursor.fetchall()
+            cursor.close()
+            con.close()
+            return resultado
+        except Exception as e:
+            logger.error(f"Erro ao buscar estágios por situação: {e}")
+            return []
+    
+    @staticmethod
+    def alunos_por_status():
+        """Retorna quantidade de alunos por status"""
+        try:
+            con = conectar()
+            cursor = con.cursor(dictionary=True)
+            cursor.execute("""
+                SELECT statusAluno, COUNT(*) as total 
+                FROM aluno 
+                WHERE (ativo IS NULL OR ativo = 1)
+                GROUP BY statusAluno
+            """)
+            resultado = cursor.fetchall()
+            cursor.close()
+            con.close()
+            return resultado
+        except Exception as e:
+            logger.error(f"Erro ao buscar alunos por status: {e}")
+            return []
+    
+    @staticmethod
+    def estagios_ultimos_6_meses():
+        """Retorna estágios iniciados nos últimos 6 meses"""
         try:
             con = conectar()
             cursor = con.cursor(dictionary=True)
             
-            data_limite = datetime.now() - timedelta(days=dias)
+            hoje = datetime.now()
+            resultado = []
             
-            cursor.execute("""
-                SELECT COUNT(*) as total
-                FROM estagio 
-                WHERE dataInicio >= %s
-                AND (ativo IS NULL OR ativo = 1)
-            """, (data_limite.date(),))
-            estagios_iniciados = cursor.fetchone()['total']
-            
-            cursor.execute("""
-                SELECT statusAluno, COUNT(*) as total
-                FROM aluno 
-                WHERE ativo IS NULL OR ativo = 1
-                GROUP BY statusAluno
-            """)
-            alunos_por_status = cursor.fetchall()
-            
-            cursor.execute("""
-                SELECT situacao, COUNT(*) as total
-                FROM estagio 
-                WHERE ativo IS NULL OR ativo = 1
-                GROUP BY situacao
-            """)
-            estagios_por_situacao = cursor.fetchall()
+            for i in range(5, -1, -1):
+                mes_atual = hoje.month - i
+                ano_atual = hoje.year
+                
+                while mes_atual <= 0:
+                    mes_atual += 12
+                    ano_atual -= 1
+                
+                primeiro_dia = datetime(ano_atual, mes_atual, 1).date()
+                
+                if mes_atual == 12:
+                    ultimo_dia = datetime(ano_atual, 12, 31).date()
+                else:
+                    ultimo_dia = (datetime(ano_atual, mes_atual + 1, 1) - timedelta(days=1)).date()
+                
+                meses_pt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 
+                           'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+                nome_mes = f"{meses_pt[mes_atual-1]}/{str(ano_atual)[2:]}"
+                
+                cursor.execute("""
+                    SELECT COUNT(*) as total 
+                    FROM estagio 
+                    WHERE (ativo IS NULL OR ativo = 1)
+                    AND dataInicio BETWEEN %s AND %s
+                """, (primeiro_dia, ultimo_dia))
+                
+                total = cursor.fetchone()['total']
+                resultado.append({'mes': nome_mes, 'total': total})
             
             cursor.close()
             con.close()
-            
-            return {
-                'estagios_iniciados_periodo': estagios_iniciados,
-                'alunos_por_status': alunos_por_status,
-                'estagios_por_situacao': estagios_por_situacao
-            }
+            return resultado
         except Exception as e:
-            logger.error(f"⚠️ Erro ao buscar estatísticas por período: {e}")
-            return {
-                'estagios_iniciados_periodo': 0,
-                'alunos_por_status': [],
-                'estagios_por_situacao': []
-            }
+            logger.error(f"Erro ao buscar estágios dos últimos meses: {e}")
+            return []

@@ -184,7 +184,70 @@
 
     @keyframes fadeIn { from{ opacity:0;} to{ opacity:1; } }
     @keyframes slideUp { from{ transform: translateY(20px); opacity:0; } to{ transform: translateY(0); opacity:1; } }
+  
+
+    /* ========== PADRONIZAÇÃO DE BOTÕES DE AÇÃO ========== */
+    .action-buttons {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    /* Botões com largura fixa */
+    .btn-action-fixed {
+      min-width: 120px;
+      text-align: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+    }
+
+    /* Dropdown de documentos (estágios) */
+    .action-buttons .btn-group .btn {
+      min-width: 140px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    /* Garante que botões dentro de form também tenham largura fixa */
+    .action-buttons form {
+      display: inline-block;
+    }
+
+    .action-buttons form button {
+      min-width: 120px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+    } 
+
+    /* Responsivo */
+    @media (max-width: 992px) {
+      .action-buttons {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    
+      .btn-action-fixed,
+      .action-buttons form button,
+      .action-buttons .btn-group {
+        width: 100%;
+        min-width: auto;
+      }
+    
+    .action-buttons .btn-group .btn {
+        width: 100%;
+    }
+}
   </style>
+
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
@@ -207,14 +270,14 @@
           {% if usuario_nivel >= NIVEL_COORDENADOR %}
           <li class="nav-item">
             <a class="nav-link {% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('index') }}">
-              <i class="bi bi-house-door-fill"></i> Início
+              <i class="bi bi-house"></i> Início
             </a>
           </li>
           {% endif %}
           {% if usuario_nivel >= NIVEL_COORDENADOR %}
           <li class="nav-item">
             <a class="nav-link {% if 'aluno' in request.endpoint %}active{% endif %}" href="{{ url_for('alunos') }}">
-              <i class="bi bi-people-fill"></i> Alunos
+              <i class="bi bi-person"></i> Alunos
             </a>
           </li>
           <li class="nav-item">
@@ -225,6 +288,12 @@
           <li class="nav-item">
             <a class="nav-link {% if 'estagio' in request.endpoint %}active{% endif %}" href="{{ url_for('estagios') }}">
               <i class="bi bi-clipboard-check"></i> Estágios
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if 'documento' in request.endpoint %}active{% endif %}" 
+               href="{{ url_for('documentos') }}">
+                <i class="bi bi-file-earmark-text"></i> Documentos
             </a>
           </li>
           {% endif %}
@@ -253,18 +322,19 @@
 
   <div class="main-container">
     {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
+    {% if messages %}
         <div class="fade-in-up mb-4">
-          {% for category, message in messages %}
-            <div class="alert alert-{{ category }} alert-custom alert-dismissible fade show" role="alert">
-              <i class="bi bi-{% if category == 'success' %}check-circle-fill{% elif category == 'danger' %}x-circle-fill{% elif category == 'warning' %}exclamation-triangle-fill{% else %}info-circle-fill{% endif %}"></i>
-              <span>{{ message }}</span>
-              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-          {% endfor %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-custom alert-dismissible fade show" role="alert">
+                    <i class="bi bi-{% if category == 'success' %}check-circle-fill{% elif category == 'danger' %}x-circle-fill{% elif category == 'warning' %}exclamation-triangle-fill{% else %}info-circle-fill{% endif %}"></i>
+                    <span>{{ message }}</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
         </div>
-      {% endif %}
-    {% endwith %}
+    {% endif %}
+{% endwith %}
+
 
     {% block content %}
 
@@ -466,6 +536,60 @@ a.btn-new, .btn-new {
         el.setAttribute('aria-valuenow', n);
       }
     });
+  });
+  </script>
+
+<script>
+  // Auto-fechar alertas após 5 segundos
+  document.addEventListener('DOMContentLoaded', function() {
+      const alerts = document.querySelectorAll('.alert-dismissible');
+      
+      alerts.forEach(function(alert) {
+          // Define o tempo em milissegundos (5000 = 5 segundos)
+          const autoCloseTime = 5000;
+          
+          // Cria barra de progresso visual (opcional)
+          const progressBar = document.createElement('div');
+          progressBar.style.cssText = `
+              position: absolute;
+              bottom: 0;
+              left: 0;
+              height: 3px;
+              background: rgba(255,255,255,0.3);
+              width: 100%;
+              animation: shrinkProgress ${autoCloseTime}ms linear;
+          `;
+          
+          // Adiciona estilo de animação
+          if (!document.getElementById('progress-animation')) {
+              const style = document.createElement('style');
+              style.id = 'progress-animation';
+              style.textContent = `
+                  @keyframes shrinkProgress {
+                      from { width: 100%; }
+                      to { width: 0%; }
+                  }
+                  
+                  .alert-custom {
+                      position: relative;
+                      overflow: hidden;
+                  }
+              `;
+              document.head.appendChild(style);
+          }
+          
+          // Adiciona barra de progresso ao alerta
+          alert.style.position = 'relative';
+          alert.style.overflow = 'hidden';
+          alert.appendChild(progressBar);
+          
+          // Fecha automaticamente após o tempo definido
+          setTimeout(function() {
+              // Usa o método do Bootstrap para fechar
+              const bsAlert = new bootstrap.Alert(alert);
+              bsAlert.close();
+          }, autoCloseTime);
+      });
   });
   </script>
   

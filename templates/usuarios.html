@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}SGE - Gerenciar Usuários{% endblock %}
+{% block title %}SGE - Usuários{% endblock %}
 {% block content %}
 
 <style>
@@ -105,7 +105,39 @@ gap: 0.5rem;
 display: flex;
 gap: 0.5rem;
 }
+
+/* Botões de ação com largura fixa */
+.btn-action-fixed {
+    min-width: 130px;
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+}
+
+/* Container dos botões */
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Responsivo - botões empilham em telas pequenas */
+@media (max-width: 768px) {
+    .action-buttons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .btn-action-fixed {
+        width: 100%;
+    }
+}
 </style>
+
 <div class="page-header fade-in-up">
   <h1 class="page-title">
     <i class="bi bi-people"></i> Gerenciar Usuários
@@ -154,24 +186,26 @@ gap: 0.5rem;
           </td>
           <td>
             <div class="action-buttons">
-              <a href="{{ url_for('usuario_editar', id=u.idUsuario) }}" class="btn btn-outline-secondary">
+              <a href="{{ url_for('usuario_editar', id=u.idUsuario) }}" 
+                 class="btn btn-outline-secondary btn-action-fixed">
                 <i class="bi bi-pencil"></i> Editar
               </a>
               {% if u.idUsuario != session.usuario_id %}
-              <form method="post" action="{{ url_for('usuario_toggle', id=u.idUsuario) }}" style="display:inline;">
-                <button type="submit"
-                        class="btn btn-sm {% if u.ativo in [0, '0', None] %}btn-outline-success{% else %}btn-outline-danger{% endif %}">
-                  <i class="bi {% if u.ativo in [0, '0', None] %}bi-check-lg{% else %}bi-dash-circle{% endif %}"></i>
-                  {% if u.ativo in [0, '0', None] %}Ativar{% else %}Desativar{% endif %}
-                </button>
-              </form>
+                <form method="post" action="{{ url_for('usuario_toggle', id=u.idUsuario) }}" style="display:inline;">
+                  <button type="submit"
+                          class="btn btn-action-fixed {% if u.ativo in [0, '0', None] %}btn-outline-success{% else %}btn-outline-danger{% endif %}">
+                    <i class="bi {% if u.ativo in [0, '0', None] %}bi-check-lg{% else %}bi-dash-circle{% endif %}"></i>
+                    {% if u.ativo in [0, '0', None] %}Ativar{% else %}Desativar{% endif %}
+                  </button>
+                </form>
               {% else %}
-              <button class="btn btn-outline-secondary" disabled title="Você não pode desativar seu próprio usuário">
-                <i class="bi bi-lock"></i> Seu Usuário
-              </button>
+                <button class="btn btn-outline-secondary btn-action-fixed" disabled 
+                        title="Você não pode desativar seu próprio usuário">
+                  <i class="bi bi-lock"></i> Seu Usuário
+                </button>
               {% endif %}
             </div>
-          </td>
+          </td>          
         </tr>
         {% endfor %}
       </tbody>

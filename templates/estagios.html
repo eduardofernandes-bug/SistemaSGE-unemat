@@ -360,19 +360,46 @@ body.dark select option {
           <td>
             <div class="action-buttons">
               {% if usuario_nivel >= NIVEL_COORDENADOR %}
-              <a href="{{ url_for('estagio_editar', id=e.idEstagio) }}" class="btn btn-outline-secondary">
-                <i class="bi bi-pencil"></i> Editar
-              </a>
+                <a href="{{ url_for('estagio_editar', id=e.idEstagio) }}" 
+                   class="btn btn-outline-secondary btn-action-fixed">
+                  <i class="bi bi-pencil"></i> Editar
+                </a>
+                <div class="btn-group" role="group">
+                  <button type="button" 
+                          class="btn btn-outline-info dropdown-toggle" 
+                          data-bs-toggle="dropdown" 
+                          aria-expanded="false">
+                    <i class="bi bi-file-earmark-text"></i> Documentos
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <a class="dropdown-item" 
+                         href="{{ url_for('gerar_plano_atividades', estagio_id=e.idEstagio) }}">
+                        <i class="bi bi-file-word text-primary"></i> Plano de Atividades
+                      </a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" 
+                         href="{{ url_for('gerar_ficha_atividades', estagio_id=e.idEstagio) }}">
+                        <i class="bi bi-file-excel text-success"></i> Ficha de Atividades
+                      </a>
+                    </li>
+                  </ul>
+                </div>
               {% endif %}
-              {% if usuario_nivel >= NIVEL_ADMIN %}
-              <form method="post" action="{{ url_for('estagio_toggle', id=e.idEstagio) }}" style="display:inline;">
-                <button type="submit"
-                        class="btn btn-sm {% if e.ativo in [0, '0', None] %}btn-outline-success{% else %}btn-outline-danger{% endif %}">
-                  <i class="bi {% if e.ativo in [0, '0', None] %}bi-check-lg{% else %}bi-dash-circle{% endif %}"></i>
-                  {% if e.ativo in [0, '0', None] %}Ativar{% else %}Desativar{% endif %}
+              {% if usuario_nivel == NIVEL_ADMIN %}
+                <form method="post" 
+                      action="{{ url_for('estagio_toggle', id=e.idEstagio) }}" 
+                      style="display:inline;">
+                  <button type="submit" 
+                          class="btn {% if e.ativo in (0, '0', None) %}btn-outline-success{% else %}btn-outline-danger{% endif %}">
+                    <i class="bi {% if e.ativo in (0, '0', None) %}bi-check-lg{% else %}bi-dash-circle{% endif %}"></i>
+                    {% if e.ativo in (0, '0', None) %}Ativar{% else %}Desativar{% endif %}
+                  </button>
+                </form>
               {% endif %}
             </div>
-          </td>
+          </td>        
         </tr>
         {% endfor %}
       </tbody>

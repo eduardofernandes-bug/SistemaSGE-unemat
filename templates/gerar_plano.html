@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+
+{% block title %}Gerar Plano de Atividades - SGE{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-file-word me-2"></i>
+                        Gerar Plano de Atividades (Anexo VI)
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Informações do Estágio -->
+                    <div class="alert alert-info">
+                        <h5><i class="bi bi-info-circle me-2"></i>Estágio Selecionado</h5>
+                        <p class="mb-1"><strong>Aluno:</strong> {{ aluno.nome }}</p>
+                        <p class="mb-1"><strong>Empresa:</strong> {{ empresa.nomeFantasia or empresa.razaoSocial }}</p>
+                        <p class="mb-0"><strong>Período:</strong> {{ estagio.dataInicio }} a {{ estagio.dataFim }}</p>
+                    </div>
+
+                    <form method="POST" id="formPlano">
+                        <!-- IDENTIFICAÇÃO DO ESTAGIÁRIO -->
+                        <h5 class="border-bottom pb-2 mb-3">
+                            <i class="bi bi-person me-2"></i>Identificação do Estagiário
+                        </h5>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Nome Completo</label>
+                                <input type="text" class="form-control" value="{{ aluno.nome }}" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Telefone *</label>
+                                <input type="text" name="telefone_aluno" class="form-control" 
+                                       value="{{ aluno.telefone }}" required>
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <label class="form-label">E-mail *</label>
+                                <input type="email" name="email_aluno" class="form-control" 
+                                       placeholder="seuemail@exemplo.com" required>
+                            </div>
+                        </div>
+
+                        <!-- IDENTIFICAÇÃO DA EMPRESA -->
+                        <h5 class="border-bottom pb-2 mb-3">
+                            <i class="bi bi-building me-2"></i>Identificação da Empresa
+                        </h5>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Nome da Empresa</label>
+                                <input type="text" class="form-control" 
+                                       value="{{ empresa.nomeFantasia or empresa.razaoSocial }}" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Telefone *</label>
+                                <input type="text" name="telefone_empresa" class="form-control" 
+                                       placeholder="(00) 0000-0000" required>
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <label class="form-label">E-mail *</label>
+                                <input type="email" name="email_empresa" class="form-control" 
+                                       placeholder="empresa@exemplo.com" required>
+                            </div>
+                        </div>
+
+                        <!-- CRONOGRAMA DE ATIVIDADES -->
+                        <h5 class="border-bottom pb-2 mb-3">
+                            <i class="bi bi-calendar-check me-2"></i>Cronograma de Atividades
+                        </h5>
+                        
+                        <div id="cronograma-container">
+                            <!-- Linha 1 -->
+                            <div class="row mb-3 cronograma-item">
+                                <div class="col-md-3">
+                                    <label class="form-label">Período</label>
+                                    <input type="text" name="periodo[]" class="form-control" 
+                                           placeholder="Ex: 1º mês" required>
+                                </div>
+                                <div class="col-md-8">
+                                    <label class="form-label">Descrição das Atividades</label>
+                                    <textarea name="atividade[]" class="form-control" rows="2" 
+                                              placeholder="Descreva as atividades previstas" required></textarea>
+                                </div>
+                                <div class="col-md-1 d-flex align-items-end">
+                                    <button type="button" class="btn btn-danger btn-sm w-100" 
+                                            onclick="removerAtividade(this)" style="visibility: hidden;">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn btn-outline-primary mb-4" onclick="adicionarAtividade()">
+                            <i class="bi bi-plus-circle me-1"></i>Adicionar Atividade
+                        </button>
+
+                        <!-- LOCALIZAÇÃO -->
+                        <h5 class="border-bottom pb-2 mb-3">
+                            <i class="bi bi-geo-alt me-2"></i>Localização
+                        </h5>
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">Cidade *</label>
+                                <input type="text" name="cidade" class="form-control" 
+                                       value="{{ aluno.cidade or '' }}" 
+                                       placeholder="Nome da cidade" required>
+                            </div>
+                        </div>
+
+                        <!-- BOTÕES -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{{ url_for('estagios') if usuario_nivel >= NIVEL_COORDENADOR else url_for('meus_estagios') }}" 
+                               class="btn btn-secondary">
+                                <i class="bi bi-arrow-left me-1"></i>Voltar
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-file-earmark-excel me-1"></i>Gerar Planilha
+                            </button>
+                        </div> 
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Função para mostrar modal de aviso
+    function mostrarAviso(mensagem, tipo = 'warning') {
+        const modal = new bootstrap.Modal(document.getElementById('modalAviso'));
+        const header = document.getElementById('modalAvisoHeader');
+        const titulo = document.getElementById('modalAvisoTitulo');
+        const icone = document.getElementById('modalAvisoIcon');
+        const corpo = document.getElementById('modalAvisoMensagem');
+        
+        if (tipo === 'warning') {
+            header.className = 'modal-header bg-warning text-dark';
+            titulo.textContent = 'Atenção';
+            icone.className = 'bi bi-exclamation-triangle-fill me-2';
+        } else if (tipo === 'error') {
+            header.className = 'modal-header bg-danger text-white';
+            titulo.textContent = 'Erro';
+            icone.className = 'bi bi-x-circle-fill me-2';
+        } else if (tipo === 'success') {
+            header.className = 'modal-header bg-success text-white';
+            titulo.textContent = 'Sucesso';
+            icone.className = 'bi bi-check-circle-fill me-2';
+        } else if (tipo === 'info') {
+            header.className = 'modal-header bg-info text-white';
+            titulo.textContent = 'Informação';
+            icone.className = 'bi bi-info-circle-fill me-2';
+        }
+        
+        corpo.innerHTML = `<p class="mb-0">${mensagem}</p>`;
+        modal.show();
+    }
+    
+    // ========== CRONOGRAMA (Período + Atividade) ==========
+    
+    function adicionarAtividade() {
+        const container = document.getElementById('cronograma-container');
+        if (!container) {
+            console.error('Elemento cronograma-container não encontrado!');
+            return;
+        }
+        
+        const totalAtividades = container.querySelectorAll('.cronograma-item').length;
+        
+        // Limite razoável de 20 atividades
+        if (totalAtividades >= 20) {
+            mostrarAviso('Limite máximo de 20 atividades atingido!', 'warning');
+            return;
+        }
+        
+        const novaAtividade = document.createElement('div');
+        novaAtividade.className = 'row mb-3 cronograma-item';
+        novaAtividade.innerHTML = `
+            <div class="col-md-3">
+                <label class="form-label">Período</label>
+                <input type="text" name="periodo[]" class="form-control" 
+                       placeholder="Ex: 1º mês" required>
+            </div>
+            <div class="col-md-8">
+                <label class="form-label">Descrição das Atividades</label>
+                <textarea name="atividade[]" class="form-control" rows="2" 
+                          placeholder="Descreva as atividades previstas" required></textarea>
+            </div>
+            <div class="col-md-1 d-flex align-items-end">
+                <button type="button" class="btn btn-danger btn-sm w-100" onclick="removerAtividade(this)">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </div>
+        `;
+        container.appendChild(novaAtividade);
+    }
+    
+    function removerAtividade(btn) {
+        const container = document.getElementById('cronograma-container');
+        const totalAtividades = container.querySelectorAll('.cronograma-item').length;
+        
+        if (totalAtividades <= 1) {
+            mostrarAviso('Deve haver pelo menos uma atividade no plano!', 'warning');
+            return;
+        }
+        
+        btn.closest('.cronograma-item').remove();
+    }
+    
+    // Validação antes de enviar
+    document.getElementById('formPlano')?.addEventListener('submit', function(e) {
+        const periodos = document.querySelectorAll('input[name="periodo[]"]');
+        const atividades = document.querySelectorAll('textarea[name="atividade[]"]');
+        let vazios = 0;
+        
+        periodos.forEach(input => {
+            if (!input.value.trim()) vazios++;
+        });
+        
+        atividades.forEach(textarea => {
+            if (!textarea.value.trim()) vazios++;
+        });
+        
+        if (vazios > 0) {
+            e.preventDefault();
+            mostrarAviso(`Existem ${vazios} campo(s) vazio(s). Preencha ou remova antes de gerar.`, 'warning');
+        }
+    });
+</script>
+    
+<!-- Modal de Avisos -->
+<div class="modal fade" id="modalAviso" tabindex="-1" aria-labelledby="modalAvisoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" id="modalAvisoHeader">
+                <h5 class="modal-title" id="modalAvisoLabel">
+                    <i class="bi bi-exclamation-triangle-fill me-2" id="modalAvisoIcon"></i>
+                    <span id="modalAvisoTitulo">Aviso</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body" id="modalAvisoMensagem">
+                <!-- Mensagem será inserida aqui via JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

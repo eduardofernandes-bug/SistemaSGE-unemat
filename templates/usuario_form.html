@@ -98,6 +98,68 @@
   font-weight: bold;
   margin-right: 0.5rem;
 }
+
+
+/* ========== CARDS DE NÍVEL CLICÁVEIS ========== */
+
+/* Esconde o radio button original */
+.nivel-radio {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Estilo do card */
+.nivel-card {
+    display: block;
+    background: var(--bg-card);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+/* Hover no card */
+.nivel-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+    border-color: var(--primary);
+}
+
+/* Card SELECIONADO */
+.nivel-radio:checked + .nivel-card {
+    background: rgba(59, 130, 246, 0.08);
+    border-color: var(--primary);
+    border-width: 3px;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* Ícone de check no canto quando selecionado */
+.nivel-radio:checked + .nivel-card::after {
+    content: '\F26B'; /* Ícone check do Bootstrap Icons */
+    font-family: 'bootstrap-icons';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    background: var(--primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+/* Modo escuro */
+body.dark .nivel-radio:checked + .nivel-card {
+    background: rgba(59, 130, 246, 0.15);
+}
+
 </style>
 
 <div class="form-container fade-in-up">
@@ -162,72 +224,77 @@
         <small class="text-muted">Associe este usuário ao registro do aluno para exibir a tela "Meus Estágios".</small>
       </div>
 
-      <div class="col-md-12">
-        <label class="form-label mb-3">Nível de Acesso</label>
-        
-        <!-- Nível 1: Visualizador -->
-        <label class="nivel-card" for="nivel1">
-          <input type="radio" name="nivel" id="nivel1" value="1" 
-                 {% if not usuario or usuario.nivel == 1 %}checked{% endif %}>
-          <div class="nivel-header">
-            <span class="nivel-nome">
-              <i class="bi bi-eye"></i> Visualizador
-            </span>
-            <span class="nivel-badge badge-info">Nível 1</span>
-          </div>
-          <div class="nivel-descricao">Acesso somente leitura ao sistema</div>
-          <div class="nivel-permissoes">
-            <ul>
-              <li>Visualizar alunos, empresas e estágios</li>
-              <li>Visualizar estatísticas</li>
-              <li>NÃO pode criar, editar ou excluir</li>
-            </ul>
-          </div>
-        </label>
-
-        <!-- Nível 2: Coordenador -->
-        <label class="nivel-card" for="nivel2">
-          <input type="radio" name="nivel" id="nivel2" value="2"
-                 {% if usuario and usuario.nivel == 2 %}checked{% endif %}>
-          <div class="nivel-header">
-            <span class="nivel-nome">
-              <i class="bi bi-kanban"></i> Coordenador
-            </span>
-            <span class="nivel-badge badge-warning">Nível 2</span>
-          </div>
-          <div class="nivel-descricao">Gerenciamento completo de dados acadêmicos</div>
-          <div class="nivel-permissoes">
-            <ul>
-              <li>Todas as permissões do Visualizador</li>
-              <li>Criar, editar e excluir alunos</li>
-              <li>Criar, editar e excluir empresas</li>
-              <li>Criar, editar e excluir estágios</li>
-              <li>NÃO pode gerenciar usuários</li>
-            </ul>
-          </div>
-        </label>
-
-        <!-- Nível 3: Administrador -->
-        <label class="nivel-card" for="nivel3">
-          <input type="radio" name="nivel" id="nivel3" value="3"
-                 {% if usuario and usuario.nivel == 3 %}checked{% endif %}>
-          <div class="nivel-header">
-            <span class="nivel-nome">
-              <i class="bi bi-shield-lock"></i> Administrador
-            </span>
-            <span class="nivel-badge badge-danger">Nível 3</span>
-          </div>
-          <div class="nivel-descricao">Acesso total ao sistema</div>
-          <div class="nivel-permissoes">
-            <ul>
-              <li>Todas as permissões do Coordenador</li>
-              <li>Gerenciar usuários do sistema</li>
-              <li>Configurações avançadas</li>
-              <li>Acesso irrestrito</li>
-            </ul>
-          </div>
-        </label>
+<!-- Nível de Acesso -->
+<div class="mb-4">
+  <label class="form-label-custom">Nível de Acesso</label>
+  
+  <div class="row">
+      <!-- Card Visualizador (Nível 1) -->
+      <div class="col-12 mb-3">
+          <input type="radio" name="nivel" id="nivel1" value="1" class="nivel-radio" {% if usuario and usuario.nivel == 1 %}checked{% endif %} required>
+          <label for="nivel1" class="nivel-card">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                  <h6 class="mb-0">
+                      <i class="bi bi-eye me-2"></i>
+                      Visualizador
+                  </h6>
+                  <span class="badge bg-primary">NÍVEL 1</span>
+              </div>
+              <p class="text-muted mb-2" style="font-size: 0.9rem;">Acesso somente leitura ao sistema</p>
+              <ul class="list-unstyled mb-0" style="font-size: 0.85rem;">
+                  <li class="mb-1"><i class="bi bi-check-circle text-success me-1"></i> Visualizar alunos, empresas e estágios</li>
+                  <li class="mb-1"><i class="bi bi-check-circle text-success me-1"></i> Visualizar estatísticas</li>
+                  <li class="mb-1"><i class="bi bi-x-circle text-danger me-1"></i> NÃO pode criar, editar ou excluir</li>
+              </ul>
+          </label>
       </div>
+      
+      <!-- Card Coordenador (Nível 2) -->
+      <div class="col-12 mb-3">
+          <input type="radio" name="nivel" id="nivel2" value="2" class="nivel-radio" {% if usuario and usuario.nivel == 2 %}checked{% endif %}>
+          <label for="nivel2" class="nivel-card">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                  <h6 class="mb-0">
+                      <i class="bi bi-book me-2"></i>
+                      Coordenador
+                  </h6>
+                  <span class="badge bg-warning text-dark">NÍVEL 2</span>
+              </div>
+              <p class="text-muted mb-2" style="font-size: 0.9rem;">Gerenciamento completo de dados acadêmicos</p>
+              <ul class="list-unstyled mb-0" style="font-size: 0.85rem;">
+                  <li class="mb-1"><i class="bi bi-check-circle text-success me-1"></i> Todas as permissões do Visualizador</li>
+                  <li class="mb-1"><i class="bi bi-check-circle text-success me-1"></i> Criar, editar e excluir alunos</li>
+                  <li class="mb-1"><i class="bi bi-check-circle text-success me-1"></i> Criar, editar e excluir empresas</li>
+                  <li class="mb-1"><i class="bi bi-check-circle text-success me-1"></i> Criar, editar e excluir estágios</li>
+                  <li class="mb-1"><i class="bi bi-x-circle text-danger me-1"></i> NÃO pode gerenciar usuários</li>
+              </ul>
+          </label>
+      </div>
+      
+      <!-- Card Administrador (Nível 3) -->
+      <div class="col-12 mb-3">
+          <input type="radio" name="nivel" id="nivel3" value="3" class="nivel-radio" {% if usuario and usuario.nivel == 3 %}checked{% endif %}>
+          <label for="nivel3" class="nivel-card">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                  <h6 class="mb-0">
+                      <i class="bi bi-shield-check me-2"></i>
+                      Administrador
+                  </h6>
+                  <span class="badge bg-danger">NÍVEL 3</span>
+              </div>
+              <p class="text-muted mb-2" style="font-size: 0.9rem;">Acesso total ao sistema</p>
+              <ul class="list-unstyled mb-0" style="font-size: 0.85rem;">
+                  <li class="mb-1"><i class="bi bi-check-circle text-success me-1"></i> Todas as permissões do Coordenador</li>
+                  <li class="mb-1"><i class="bi bi-check-circle text-success me-1"></i> Gerenciar usuários do sistema</li>
+                  <li class="mb-1"><i class="bi bi-check-circle text-success me-1"></i> Configurações avançadas</li>
+                  <li class="mb-1"><i class="bi bi-check-circle text-success me-1"></i> Acesso irrestrito</li>
+              </ul>
+          </label>
+      </div>
+  </div>
+</div>
+
+
     </div>
 
     <div class="form-actions" style="margin-top: 2rem; padding-top: 1.5rem; border-top: 2px solid var(--border); display: flex; gap: 0.75rem;">

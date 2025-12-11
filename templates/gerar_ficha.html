@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+
+{% block title %}Gerar Ficha de Atividades - SGE{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-11">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-file-excel me-2"></i>
+                        Gerar Ficha de Atividades (Anexo VII)
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Informações do Estágio -->
+                    <div class="alert alert-info">
+                        <h5><i class="bi bi-info-circle me-2"></i>Estágio Selecionado</h5>
+                        <p class="mb-1"><strong>Aluno:</strong> {{ aluno.nome }}</p>
+                        <p class="mb-1"><strong>Empresa:</strong> {{ empresa.nomeFantasia or empresa.razaoSocial }}</p>
+                        <p class="mb-0"><strong>Supervisor:</strong> {{ estagio.supervisor or 'Não informado' }}</p>
+                    </div>
+
+                    <form method="POST" id="formFicha">
+                        <!-- PERÍODO -->
+                        <h5 class="border-bottom pb-2 mb-3">
+                            <i class="bi bi-calendar-month me-2"></i>Período de Referência
+                        </h5>
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">Mês *</label>
+                                <select name="mes" class="form-select" required>
+                                    <option value="">Selecione o mês</option>
+                                    {% for mes in meses %}
+                                        <option value="{{ mes }}">{{ mes }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Ano *</label>
+                                <input type="number" name="ano" class="form-control" 
+                                       value="2025" min="2020" max="2030" required>
+                            </div>
+                        </div>
+
+                        <!-- ATIVIDADES DIÁRIAS -->
+                        <h5 class="border-bottom pb-2 mb-3">
+                            <i class="bi bi-clock-history me-2"></i>Atividades Diárias
+                            <button type="button" class="btn btn-sm btn-outline-primary float-end" 
+                                    onclick="adicionarMultiplasLinhas()">
+                                <i class="bi bi-plus-circle me-1"></i>Adicionar 5 linhas
+                            </button>
+                        </h5>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover" id="tabelaAtividades">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th width="8%">Dia</th>
+                                        <th width="12%">Horário Início</th>
+                                        <th width="12%">Horário Término</th>
+                                        <th width="60%">Descrição das Atividades</th>
+                                        <th width="8%" class="text-center">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="atividadesBody">
+                                    <!-- Linha inicial -->
+                                    <tr class="atividade-row">
+                                        <td>
+                                            <input type="number" name="dia[]" class="form-control form-control-sm" 
+                                                   min="1" max="31" placeholder="1">
+                                        </td>
+                                        <td>
+                                            <input type="time" name="inicio[]" class="form-control form-control-sm">
+                                        </td>
+                                        <td>
+                                            <input type="time" name="termino[]" class="form-control form-control-sm">
+                                        </td>
+                                        <td>
+                                            <textarea name="descricao[]" class="form-control form-control-sm" 
+                                                      rows="1" placeholder="Descreva as atividades realizadas"></textarea>
+                                        </td>
+                                        <td class="text-center">
+                                            <button type="button" class="btn btn-danger btn-sm" 
+                                                    onclick="removerLinha(this)" style="visibility: hidden;">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <button type="button" class="btn btn-outline-secondary mb-4" onclick="adicionarLinha()">
+                            <i class="bi bi-plus me-1"></i>Adicionar Dia
+                        </button>
+
+                        <!-- BOTÕES -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{{ url_for('estagios') if usuario_nivel >= NIVEL_COORDENADOR else url_for('meus_estagios') }}" 
+                               class="btn btn-secondary">
+                                <i class="bi bi-arrow-left me-1"></i>Voltar
+                            </a>
+                            
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-file-earmark-excel me-1"></i>Gerar Planilha
+                            </button>
+                        </div>                        
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Função para mostrar modal de aviso
+    function mostrarAviso(mensagem, tipo = 'warning') {
+        const modal = new bootstrap.Modal(document.getElementById('modalAviso'));
+        const header = document.getElementById('modalAvisoHeader');
+        const titulo = document.getElementById('modalAvisoTitulo');
+        const icone = document.getElementById('modalAvisoIcon');
+        const corpo = document.getElementById('modalAvisoMensagem');
+        
+        // Define cores e ícones baseado no tipo
+        if (tipo === 'warning') {
+            header.className = 'modal-header bg-warning text-dark';
+            titulo.textContent = 'Atenção';
+            icone.className = 'bi bi-exclamation-triangle-fill me-2';
+        } else if (tipo === 'error') {
+            header.className = 'modal-header bg-danger text-white';
+            titulo.textContent = 'Erro';
+            icone.className = 'bi bi-x-circle-fill me-2';
+        } else if (tipo === 'success') {
+            header.className = 'modal-header bg-success text-white';
+            titulo.textContent = 'Sucesso';
+            icone.className = 'bi bi-check-circle-fill me-2';
+        } else if (tipo === 'info') {
+            header.className = 'modal-header bg-info text-white';
+            titulo.textContent = 'Informação';
+            icone.className = 'bi bi-info-circle-fill me-2';
+        }
+        
+        corpo.innerHTML = `<p class="mb-0">${mensagem}</p>`;
+        modal.show();
+    }
+    
+    // Função para obter o próximo número de dia disponível
+    function obterProximoDia() {
+        const inputs = document.querySelectorAll('input[name="dia[]"]');
+        const diasUsados = [];
+        
+        inputs.forEach(input => {
+            if (input.value) {
+                diasUsados.push(parseInt(input.value));
+            }
+        });
+        
+        if (diasUsados.length === 0) return 1;
+        
+        const maiorDia = Math.max(...diasUsados);
+        return maiorDia < 31 ? maiorDia + 1 : 31;
+    }
+    
+    function contarLinhas() {
+        return document.querySelectorAll('.atividade-row').length;
+    }
+    
+    function adicionarLinha() {
+        if (contarLinhas() >= 31) {
+            mostrarAviso('Limite máximo de 31 dias atingido!', 'warning');
+            return;
+        }
+        
+        const tbody = document.getElementById('atividadesBody');
+        const novaLinha = document.createElement('tr');
+        const proximoDia = obterProximoDia();
+        
+        novaLinha.className = 'atividade-row';
+        novaLinha.innerHTML = `
+            <td>
+                <input type="number" name="dia[]" class="form-control form-control-sm" 
+                       min="1" max="31" value="${proximoDia}" placeholder="${proximoDia}">
+            </td>
+            <td>
+                <input type="time" name="inicio[]" class="form-control form-control-sm">
+            </td>
+            <td>
+                <input type="time" name="termino[]" class="form-control form-control-sm">
+            </td>
+            <td>
+                <textarea name="descricao[]" class="form-control form-control-sm" 
+                          rows="1" placeholder="Descreva as atividades realizadas"></textarea>
+            </td>
+            <td class="text-center">
+                <button type="button" class="btn btn-danger btn-sm" onclick="removerLinha(this)">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        `;
+        tbody.appendChild(novaLinha);
+    }
+    
+    function adicionarMultiplasLinhas() {
+        const linhasRestantes = 31 - contarLinhas();
+        const quantidadeAdicionar = Math.min(5, linhasRestantes);
+        
+        if (quantidadeAdicionar === 0) {
+            mostrarAviso('Limite máximo de 31 dias já atingido!', 'warning');
+            return;
+        }
+        
+        if (quantidadeAdicionar < 5) {
+            mostrarAviso(`Só é possível adicionar mais ${quantidadeAdicionar} linha(s) para completar 31 dias.`, 'info');
+        }
+        
+        for (let i = 0; i < quantidadeAdicionar; i++) {
+            adicionarLinha();
+        }
+    }
+    
+    function removerLinha(btn) {
+        const totalLinhas = contarLinhas();
+        
+        if (totalLinhas <= 1) {
+            mostrarAviso('Deve haver pelo menos uma linha de atividade!', 'warning');
+            return;
+        }
+        
+        btn.closest('.atividade-row').remove();
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        const primeiroInput = document.querySelector('input[name="dia[]"]');
+        if (primeiroInput && !primeiroInput.value) {
+            primeiroInput.value = '1';
+            primeiroInput.placeholder = '1';
+        }
+    });
+    </script>
+    
+    
+<!-- Modal de Avisos -->
+<div class="modal fade" id="modalAviso" tabindex="-1" aria-labelledby="modalAvisoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" id="modalAvisoHeader">
+                <h5 class="modal-title" id="modalAvisoLabel">
+                    <i class="bi bi-exclamation-triangle-fill me-2" id="modalAvisoIcon"></i>
+                    <span id="modalAvisoTitulo">Aviso</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body" id="modalAvisoMensagem">
+                <!-- Mensagem será inserida aqui via JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+

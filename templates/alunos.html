@@ -259,7 +259,7 @@ body.dark select option {
 
 <div class="page-header fade-in-up">
   <h1 class="page-title">
-    <i class="bi bi-people-fill"></i>
+    <i class="bi bi-person"></i>
     Gerenciar Alunos
   </h1>
   {% if usuario_nivel >= NIVEL_COORDENADOR %}
@@ -369,21 +369,22 @@ body.dark select option {
           <td>
             <div class="action-buttons">
               {% if usuario_nivel >= NIVEL_COORDENADOR %}
-              <a href="{{ url_for('aluno_editar', id=a.idAluno) }}" class="btn btn-outline-secondary">
-                <i class="bi bi-pencil"></i> Editar
-              </a>
+                <a href="{{ url_for('aluno_editar', id=a.idAluno) }}" 
+                   class="btn btn-outline-secondary btn-action-fixed">
+                  <i class="bi bi-pencil"></i> Editar
+                </a>
               {% endif %}
               {% if usuario_nivel >= NIVEL_ADMIN %}
-              <form method="post" action="{{ url_for('aluno_toggle', id=a.idAluno) }}" style="display:inline;">
-                <button type="submit"
-                        class="btn btn-sm {% if a.ativo in [0, '0', None] %}btn-outline-success{% else %}btn-outline-danger{% endif %}">
-                  <i class="bi {% if a.ativo in [0, '0', None] %}bi-check-lg{% else %}bi-dash-circle{% endif %}"></i>
-                  {% if a.ativo in [0, '0', None] %}Ativar{% else %}Desativar{% endif %}
-                </button>
-              </form>
+                <form method="post" action="{{ url_for('aluno_toggle', id=a.idAluno) }}" style="display:inline;">
+                  <button type="submit"
+                          class="btn {% if a.ativo in [0, '0', None] %}btn-outline-success{% else %}btn-outline-danger{% endif %}">
+                    <i class="bi {% if a.ativo in [0, '0', None] %}bi-check-lg{% else %}bi-dash-circle{% endif %}"></i>
+                    {% if a.ativo in [0, '0', None] %}Ativar{% else %}Desativar{% endif %}
+                  </button>
+                </form>
               {% endif %}
             </div>
-          </td>
+          </td>          
         </tr>
         {% endfor %}
       </tbody>
