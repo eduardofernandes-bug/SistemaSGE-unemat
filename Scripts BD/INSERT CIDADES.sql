@@ -1,3 +1,4 @@
+
 INSERT INTO cidades (idCidade, nome, idEstadoE) VALUES
 (1, 'Afonso Cláudio', 8),
 (2, 'Água Doce do Norte', 8),

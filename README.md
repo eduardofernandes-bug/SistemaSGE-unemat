@@ -15,8 +15,9 @@ Sistema web moderno e completo para gerenciamento de estágios em instituições
 - 🎓 **Gerenciamento de Alunos** - Cadastro completo com validações automáticas
 - 🏢 **Empresas Parceiras** - Controle de empresas conveniadas
 - 📋 **Controle de Estágios** - Acompanhamento detalhado de contratos
-- 🧑‍💼 **Gestão de Usuários** - Níveis de acesso: Visualizador, Coordenador e Administrador.
-- 📊 **Dashboard Intuitivo** - Estatísticas em tempo real
+- 🧑‍💼 **Gestão de Usuários** - Níveis de acesso: Visualizador, Coordenador e Administrador
+- 📊 **Dashboard com Gráficos** - Visualizações interativas com Chart.js
+- 📄 **Geração de Documentos** - Planos e Fichas de Atividades automatizados
 - 🔍 **Filtros Avançados** - Busca por estado, cidade e status
 - 🎨 **Tema Claro/Escuro** - Interface personalizável
 - 📱 **Design Responsivo** - Compatível com dispositivos móveis
@@ -105,7 +106,8 @@ sge/
 ├── estagio.py                # Model de Estágio
 ├── localidades.py            # Model de Estados/Cidades
 ├── usuario.py                # Model de Usuários
-├── estatisticas.py           # Cálculos e métricas
+├── estatisticas.py           # Cálculos e métricas + dados para gráficos
+├── documento.py              # Geração de documentos .docx e .xlsx
 ├── generate_secret_key.py    # Gerador de chave secreta
 ├── requirements.txt          # Dependências Python
 ├── .env.example              # Template de configuração
@@ -114,7 +116,7 @@ sge/
 │
 └── templates/                # Templates Jinja2
     ├── base.html             # Layout base
-    ├── index.html            # Dashboard principal
+    ├── index.html            # Dashboard principal com gráficos
     ├── login.html            # Tela de login
     ├── alunos.html           # Lista de alunos
     ├── aluno_form.html       # Formulário de aluno
@@ -122,10 +124,12 @@ sge/
     ├── empresa_form.html     # Formulário de empresa
     ├── estagios.html         # Lista de estágios
     ├── estagio_form.html     # Formulário de estágio
-    ├── usuarios.html		  # Lista de usuários
+    ├── usuarios.html         # Lista de usuários
     ├── usuario_form.html     # Formulário de usuários
     ├── primeiro_acesso.html  # Cadastro inicial do usuário administrador
-    └── meus_estagios.html    # Visualização dos estágios do aluno
+    ├── meus_estagios.html    # Visualização dos estágios do aluno
+    ├── gerar_plano.html      # Interface para gerar Plano de Atividades
+    └── gerar_ficha.html      # Interface para gerar Ficha de Atividades
 ```
 
 ---
@@ -165,12 +169,40 @@ sge/
 - Barra de progresso automática
 - Situação atual
 
-### 📊 Dashboard
-- Total de alunos ativos
-- Total de empresas parceiras
-- Estágios ativos no momento
-- Estágios concluídos no mês atual
-- Cards informativos com ícones
+### 📊 Dashboard com Gráficos Interativos
+- **Cards Informativos:**
+  - Total de alunos ativos
+  - Total de empresas parceiras
+  - Estágios ativos no momento
+  - Estágios concluídos no mês atual
+
+- **Visualizações Gráficas (Chart.js 4.4.1):**
+  - 📊 **Gráfico de Pizza**: Distribuição de Estágios por Situação
+  - 👨‍🎓 **Gráfico de Pizza**: Distribuição de Alunos por Status
+  - 📈 **Gráfico de Linha**: Evolução de Novos Estágios (últimos 6 meses)
+
+- **Características:**
+  - Responsivos e interativos
+  - Atualização em tempo real
+  - Cores intuitivas e consistentes
+  - Animações suaves
+
+### 📄 Geração Automatizada de Documentos
+- **Anexo VI - Plano de Atividades (.docx)**
+  - Preenchimento automático de dados do aluno, empresa e estágio
+  - Formatação padronizada institucional
+  - Download direto pelo navegador
+
+- **Anexo VII - Ficha de Atividades (.xlsx)**
+  - Planilha mensal com dias do mês
+  - Cabeçalho com dados do estagiário
+  - Formatação profissional (bordas, cores, alinhamento)
+  - Nome de arquivo automático: `Ficha_Atividades_{ALUNO}_{MES}_{ANO}.xlsx`
+
+- **Tecnologias:**
+  - `python-docx` para documentos Word
+  - `openpyxl` para planilhas Excel
+  - Validações de data e existência de estágio
 
 ---
 
@@ -182,18 +214,31 @@ sge/
 - ✅ Sessões com expiração
 - ✅ Usuário não pode se autodesativar
 - ✅ .env fora do versionamento
+- ✅ Hash de senhas com Werkzeug
 
 ---
 
 ## 🛠️ Tecnologias
 
+### Backend
 | Tecnologia | Versão | Uso |
 |------------|--------|-----|
-| Python | 3.8+ | Backend |
+| Python | 3.8+ | Linguagem principal |
 | Flask | 3.0.0 | Framework web |
 | MySQL | 5.7+ | Banco de dados |
-| Bootstrap | 5.3.0 | Interface |
-| Jinja2 | 3.1+ | Templates |
+| python-docx | 1.1.0 | Geração de documentos Word |
+| openpyxl | 3.1.2 | Geração de planilhas Excel |
+| Werkzeug | 3.0.1 | Segurança e hash |
+| python-dotenv | 1.0.0 | Variáveis de ambiente |
+
+### Frontend
+| Tecnologia | Versão | Uso |
+|------------|--------|-----|
+| Bootstrap | 5.3.0 | Framework CSS |
+| Bootstrap Icons | 1.11.0 | Ícones |
+| Chart.js | 4.4.1 | Gráficos interativos |
+| Jinja2 | 3.1+ | Template engine |
+| JavaScript | ES6+ | Interatividade |
 
 
 ---
@@ -227,6 +272,33 @@ PORT=5000
 
 ## 📖 API Endpoints
 
+### Estatísticas para Dashboard
+```http
+GET /api/estatisticas
+```
+
+**Resposta:**
+```json
+{
+  "total_alunos": 150,
+  "total_empresas": 45,
+  "estagios_ativos": 89,
+  "estagios_concluidos_mes": 12,
+  "estagios_por_situacao": [
+    {"situacao": "Ativo", "total": 89},
+    {"situacao": "Concluído", "total": 34}
+  ],
+  "alunos_por_status": [
+    {"status": "Ativo", "total": 120},
+    {"status": "Inativo", "total": 30}
+  ],
+  "estagios_ultimos_6_meses": [
+    {"mes": "2025-06", "total": 15},
+    {"mes": "2025-07", "total": 22}
+  ]
+}
+```
+
 ### Cidades por Estado
 ```http
 GET /api/cidades?estado=1
@@ -253,6 +325,16 @@ GET /api/empresas?estado=1
 ### Listar Estágios
 ```http
 GET /api/estagios?cidade=5
+```
+
+### Gerar Plano de Atividades
+```http
+POST /documentos/plano/<id_estagio>
+```
+
+### Gerar Ficha de Atividades
+```http
+POST /documentos/ficha/<id_estagio>?mes=12&ano=2025
 ```
 
 ---
@@ -282,6 +364,21 @@ python generate_secret_key.py
 - Confirme que `/api/cidades` está funcionando
 - Verifique se existem dados na tabela `cidades`
 
+### Gráficos não aparecem
+- Verifique a conexão com CDN do Chart.js
+- Abra o console (F12) e procure por erros JavaScript
+- Confirme que `/api/estatisticas` retorna dados válidos
+- Limpe o cache do navegador (Ctrl+Shift+Delete)
+
+### Erro ao gerar documentos
+```bash
+# Verifique se as bibliotecas estão instaladas
+pip install python-docx openpyxl
+
+# Confirme permissões de escrita na pasta do projeto
+```
+
+---
 
 ## 🤝 Contribuindo
 
@@ -309,7 +406,7 @@ Este projeto foi desenvolvido para fins **educacionais** no **Laboratório de Pr
 
 ## 👥 Autores
 
-**Desenvolvido por:** Eduardo Fernandes, João Victor e Leonardo Miranda
+**Desenvolvido por:** Eduardo Fernandes, João Victor e Leonardo Miranda  
 **Instituição:** UNEMAT - Universidade do Estado de Mato Grosso  
 **Disciplina:** Laboratório de Programação Orientada a Objetos - LPOO  
 **Professor:** Carlos Alex Sander Juvencio Gulo  
@@ -322,6 +419,7 @@ Este projeto foi desenvolvido para fins **educacionais** no **Laboratório de Pr
 - Equipe UNEMAT
 - Comunidade Flask
 - Bootstrap Team
+- Chart.js Contributors
 - Todos os contribuidores
 
 
@@ -329,7 +427,27 @@ Este projeto foi desenvolvido para fins **educacionais** no **Laboratório de Pr
 
 ## 🔄 Changelog
 
-### v1.1.0 - Atual
+### v1.2.0 - Dezembro 2025 (Atual) 🎉
+- ✨ **Dashboard com Gráficos Interativos (Chart.js)**
+  - Gráfico de pizza: Estágios por Situação
+  - Gráfico de pizza: Alunos por Status
+  - Gráfico de linha: Evolução de Estágios (6 meses)
+- 📄 **Geração Automatizada de Documentos**
+  - Anexo VI: Plano de Atividades (.docx)
+  - Anexo VII: Ficha de Atividades (.xlsx)
+  - Preenchimento automático de dados
+- 📊 **Novas APIs de Estatísticas**
+  - `/api/estatisticas` com dados completos
+  - Endpoints para gráficos
+- 🎨 **Melhorias de UI/UX**
+  - Cards responsivos no dashboard
+  - Animações suaves
+  - Layout modernizado
+- 🔧 **Novos Módulos**
+  - `documento.py` para geração de arquivos
+  - Métodos expandidos em `estatisticas.py`
+
+### v1.1.0 - Novembro 2025
 - ✅ Tema escuro/claro completo
 - ✅ Novo layout moderno em todas as telas
 - ✅ Tela de Primeiro Acesso
@@ -341,7 +459,7 @@ Este projeto foi desenvolvido para fins **educacionais** no **Laboratório de Pr
 - ✅ Ajustes na segurança
 - ✅ Melhorias de UI/UX
 
-### v1.0.0 - Inicial
+### v1.0.0 - Outubro 2025
 - ✅ Estrutura básica com CRUDs
 - ✅ Dashboard simples
 - ✅ Temas e filtros iniciais
@@ -352,7 +470,7 @@ Este projeto foi desenvolvido para fins **educacionais** no **Laboratório de Pr
 
 **⭐ Se este projeto foi útil, considere dar uma estrela!**
 
-Desenvolvido com ❤️ por [Sua Equipe] - UNEMAT
+Desenvolvido com ❤️ por Eduardo, João e Leonardo - UNEMAT
 
 [⬆ Voltar ao topo](#-sge---sistema-de-gerenciamento-de-estágios)
 

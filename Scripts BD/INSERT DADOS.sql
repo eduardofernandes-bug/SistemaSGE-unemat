@@ -1,8 +1,4 @@
--- Inserções atualizadas para SCRIPT DB v4
--- Arquivo original: INSERT DADOS.sql. Ajustado para o schema sge e colunas do SCRIPT DB v4. :contentReference[oaicite:0]{index=0}
--- Referência do script DDL: SCRIPT DB v4.sql. :contentReference[oaicite:1]{index=1}
 
--- ---------- ALUNOS (30)
 INSERT INTO `sge`.`aluno` (
   nome, matricula, CPF, nomeInstitucional, telefone, periodo, statusAluno, endereco, bairro, idCidade_Cidades, idEstadoE_Cidades, ativo
 ) VALUES
@@ -21,6 +17,7 @@ INSERT INTO `sge`.`aluno` (
 ('Thiago Pereira', '2025013', '36914725800', 'Thiago P.', '65999900112', 'Noturno', 'Ativo', 'Av. Brasil, 120', 'Centro Norte', 882, 7, 1),
 ('Clara Mendes', '2025014', '74136985200', 'Clara M.', '65990011223', 'Matutino', 'Ativo', 'Rua H, 5', 'Vila Rica', 1383, 13, 1),
 ('Eduardo Fernandes', '2025015', '85214796300', 'Eduardo F.', '65991122334', 'Integral', 'Ativo', 'Av. Principal, 50', 'Centro', 1455, 13, 1),
+('Raquel Silva', '2025031', '85214796301', 'Raquel S.', '65991122335', 'Integral', 'Ativo', 'Av. Principal, 50', 'Centro', 1455, 13, 1),
 ('Bruna Santos', '2025016', '96374125800', 'Bruna S.', '65992233445', 'Vespertino', 'Concluído', 'Rua I, 88', 'Jardim Acácias', 1473, 13, 1),
 ('Igor Fernandes', '2025017', '15948623700', 'Igor F.', '65993344556', 'Noturno', 'Ativo', 'Rua J, 12', 'Bairro Novo', 1483, 13, 1),
 ('Larissa Rocha', '2025018', '35715948600', 'Larissa R.', '65994455667', 'Matutino', 'Ativo', 'Av. das Nações, 400', 'Jardim América', 1383, 13, 1),
@@ -37,7 +34,6 @@ INSERT INTO `sge`.`aluno` (
 ('Felipe Rocha', '2025029', '83726194500', 'Felipe R.', '65995566778', 'Integral', 'Ativo', 'Rua S, 19', 'Jardim Cedro', 1506, 12, 1),
 ('Helena Costa', '2025030', '91827364500', 'Helena C.', '65996677889', 'Vespertino', 'Ativo', 'Rua T, 7', 'Vila Santa', 616, 5, 1);
 
--- ---------- EMPRESAS (20)
 INSERT INTO `sge`.`empresa` (
   razaoSocial, nomeFantasia, cnpj, cep, endereco, bairro, idCidade_Cidades, idEstadoE_Cidades, ativo
 ) VALUES
@@ -62,7 +58,6 @@ INSERT INTO `sge`.`empresa` (
 ('Studio Fotográfico', 'FotoStudio', '88992211000188', '78805000', 'Rua Luz, 27', 'Vila Foto', 1473, 13, 1),
 ('Loja Virtual XYZ', 'LojaXYZ', '99001122334455', '78810000', 'Rua E-commerce, 88', 'Centro', 1483, 13, 1);
 
--- ---------- ESTÁGIOS (80)
 INSERT INTO `sge`.`estagio` (
   idAlunoA, idEmpresaE, dataInicio, dataFim, cargaHorariaSemanal, situacao, supervisor, orientadorAcademico, setor, documentacao, statusEstagio, ativo
 ) VALUES
@@ -145,4 +140,3 @@ INSERT INTO `sge`.`estagio` (
 (27,19,'2024-02-02','2024-08-02',30,'Concluido','Supervisor BI','Prof. BI','Fotografia','Completa','Aprovado',1),
 (28,20,'2025-03-03',NULL,20,'Ativo','Supervisor BJ','Prof. BJ','E-commerce','Pendente','Pendente',1);
 
--- Fim do arquivo de inserções ajustado para SCRIPT DB v4
